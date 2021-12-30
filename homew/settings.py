@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'widget_tweaks',
 
+    'custom_login'
     'basket',
     'commentandlike',
     'customer',
@@ -175,7 +176,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
-# AUTH_USER_MODEL = 'customer.MyUser'
+AUTH_USER_MODEL = 'custom_login.MyUser'
 
 # LOGGING ={
 #     'version':1,
