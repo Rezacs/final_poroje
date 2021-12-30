@@ -89,5 +89,5 @@ urlpatterns = [
     path('unfollow/<str:username>',unfollow,name="unfollow"),
     path('removefollower/<str:username>',removefollower,name="removefollower"),
     #customized user backend
-    path('custom_user', include('custom_login.urls')),
+    path('custom_user/', include('custom_login.urls')),
 ]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)
