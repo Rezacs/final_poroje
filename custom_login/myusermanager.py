@@ -9,8 +9,8 @@ class MyUserManager ( BaseUserManager ) :
         user = self.model(mobile = mobile , **other_fields )
         user.set_password ( password )
         user.save()
-        customer = Customer.objects.create(user_name=mobile , email=other_fields['email'])
-        customer.save()
+        #customer = Customer.objects.create(user_name=mobile , email=other_fields['email'])
+        #customer.save()
 
 
     def create_superuser ( self , mobile , password=None , **other_fields ) :
