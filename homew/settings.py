@@ -177,6 +177,10 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'custom_login.MyUser'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend' ,
+    'custom_login.mybackend.ModelBackend'
+]
 
 # LOGGING ={
 #     'version':1,
