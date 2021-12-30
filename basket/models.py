@@ -3,7 +3,6 @@ from django.db.models.fields import IntegerField
 
 from customer.models import *
 from products.models import *
-from django.contrib.auth import get_user_model
 
 # class Basket ( models.Model ) :
 #     products = models.ForeignKey(Products, on_delete=models.CASCADE)
