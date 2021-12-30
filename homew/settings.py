@@ -181,6 +181,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend' ,
     'custom_login.mybackend.ModelBackend'
 ]
+Kavenegar_API = '5A32762F6B374C2F7567504756465968595635662B51594D4E526D78494A31323573376735756A305032553D'
 
 # LOGGING ={
 #     'version':1,
