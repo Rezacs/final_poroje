@@ -78,7 +78,7 @@ class LoginForm( forms.Form ) :
     password = forms.CharField(widget=forms.PasswordInput)
 
 class MobileLoginForm( forms.Form ) :
-    mobile = forms.IntegerField( )
+    username = forms.CharField( )
     password = forms.CharField(widget=forms.PasswordInput)
 
 class EmailLoginForm( forms.Form ) :

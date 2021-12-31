@@ -1038,14 +1038,20 @@ def login_mobile (request) :
     if request.method == "POST" :
         form = MobileLoginForm(request.POST)
         if form.is_valid() :
-            customer = Customer.objects.get(mobile = form.cleaned_data.get('mobile') )
+            #customer = Customer.objects.get(user_name = form.cleaned_data.get('username') )
             #user_name = customer.user_name
-            user = authenticate(mobile =customer.mobile ,password=form.cleaned_data.get('password'))
-            if user is not None :
-                login(request,user)
-                messages.add_message(request, messages.SUCCESS , 'logged in successfuly')
-                return redirect(reverse('dashboard'))
-        messages.add_message(request, messages.WARNING , 'wrong phone or password !')
+            try :
+                bad_user = User.objects.get(username = form.cleaned_data.get('username') )
+                #user_name = bad_user.username
+                user = authenticate(mobile=bad_user.mobile,password=form.cleaned_data.get('password'))
+                #user = authenticate(username =form.cleaned_data.get('username') ,password=form.cleaned_data.get('password'))
+                if user is not None :
+                    login(request,user)
+                    messages.add_message(request, messages.SUCCESS , 'logged in successfuly')
+                    return redirect(reverse('dashboard'))
+            except :
+
+                messages.add_message(request, messages.WARNING , 'wrong username or password !')
 
     return render (request , 'poroje/login_mobile.html' , {'form' : form})
 

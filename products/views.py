@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.generic import *
 from basket.models import Basket
 from commentandlike.models import *
 from customer.models import *
@@ -343,46 +344,15 @@ def add_to_basket (request , id ) :
 
 
 @permission_classes([IsAuthenticated])
-class PostListFilter(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = Post.objects.all()
-    # filterset_class = PostListFilterss
-
+class PostListFilter(CreateView):
+    
     def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+        self.object = None
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return PostSerializer
-        elif self.request.method == 'POST':
-            return PostUpdateSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)  # PostCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        post = self.perform_create(serializer)
-        resp_serializer = PostUpdateSerializer(post)
-        headers = self.get_success_headers(serializer.data)
-        return Response(resp_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def perform_create(self, serializer):
-        #serializer.save(commit=False)
-        #serializer.writer = self.request.user
-        #serializer.customer = Customer.objects.get(user_name=self.request.user.username)
-        return serializer.save(writer=self.request.user , customer=Customer.objects.get(user_name=self.request.user.username))
-
-    def get_serializer_context(self):
-        """
-        Extra context provided to the serializer class.
-        """
-        return {
-            'request': self.request,
-            'format': self.format_kwarg,
-            'view': self,
-            'user': self.request.user
-        }
+        self.object = None
+        return super().post(request, *args, **kwargs)
 
 
 
