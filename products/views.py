@@ -361,4 +361,23 @@ def add_to_basket (request , id ) :
     return redirect(f'/onlineshop/product_detail/{product.id}')
 
 
+@permission_classes([IsAuthenticated])
+class SeeBasket(View):
+
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        form = AddProductForm(None or self.request.POST , self.request.FILES)
+        shop = Shop.accepted.filter(id = self.kwargs['ids'] )
+        return render (request , 'set_shop/new_product.html' , {'form' : form , 'shop' : shop})
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = AddProductForm(None or self.request.POST , self.request.FILES)
+        shop = Shop.accepted.filter(id = self.kwargs['ids'] )
+        bad_product = form.save(commit=False)
+        bad_product.shop = shop[0]  #request.user
+        bad_product.save()
+        messages.add_message(request, messages.INFO , 'new product was saved !')
+        return redirect(f'/onlineshop/view_shop/{shop[0].id }')
+
 

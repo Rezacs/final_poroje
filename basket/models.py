@@ -71,9 +71,9 @@ class Basket ( models.Model ) :
             sum += ( item.price * item.quantity )
         return sum
 
-    def save(self , *args , **kwargs) :
-        self.price = self.calculate()
-        super(Shop,self).save(*args , **kwargs)
+    # def save(self , *args , **kwargs) :
+    #     self.price = self.calculate()
+    #     super(Shop,self).save(*args , **kwargs)
 
     def __str__(self) -> str:
         return f"{self.owner} factor on {self.order_date}"

@@ -21,4 +21,5 @@ urlpatterns = [
     path('Shop/<str:username>', shop_page_view , name='Shop_Page'),
     path('add_product_comment/<int:comment_id>', add_product_comment , name='Product-comment-reply'),
     path('add_product_basket/<int:id>', add_to_basket , name='Add-Product-To-Basket'),
+    path('basket', SeeBasket.as_view() , name='Basket'),
 ]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)
