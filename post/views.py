@@ -59,7 +59,7 @@ def class_post_slug_view ( request , given_slug ) :
     user = request.user
     likes = Post_Likes.objects.filter(post = post )
     if user.is_authenticated :
-        customer = Customer.objects.get(user_name =user.username)
+        customer = Customer.objects.get(mobile =user.mobile)
         check = Post_Likes.objects.filter(post = post).filter(writer = user)
 
     else :
@@ -115,7 +115,7 @@ def class_post_detail ( request , post_id ) :
     user = request.user
     likes = Post_Likes.objects.filter(post__id = post_id )
     if user.is_authenticated :
-        customer = Customer.objects.get(user_name =user.username)
+        customer = Customer.objects.get(mobile =user.mobile)
         check_like_post = Post_Likes.objects.filter(post = post).filter(writer = user)
         check_like_comment = Post_Comment_likes.objects.filter(comments__post = post).filter(writer = user)
     else :
@@ -178,7 +178,7 @@ def comment_like ( request , comment_id ) :
     comment = get_object_or_404(Post_Comments , id =comment_id )
     post = comment.post
     user = request.user
-    customer = Customer.objects.get(user_name =user.username)
+    customer = Customer.objects.get(mobile =user.mobile)
     if request.method == "POST" :
         if 'comment_like' in request.POST :
             check = Post_Comment_likes.objects.filter(comments = comment).filter(writer = user)
@@ -197,7 +197,7 @@ def add_comment ( request , comment_id ) :
     comment = get_object_or_404(Post_Comments , id =comment_id )
     post = comment.post
     user = request.user
-    customer = Customer.objects.get(user_name =user.username)
+    customer = Customer.objects.get(mobile =user.mobile)
     form = CommentModelForm()
     if request.method == "POST" :
         form = CommentModelForm(request.POST)
@@ -334,7 +334,7 @@ class PostListFilter(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Ge
         #serializer.save(commit=False)
         #serializer.writer = self.request.user
         #serializer.customer = Customer.objects.get(user_name=self.request.user.username)
-        return serializer.save(writer=self.request.user , customer=Customer.objects.get(user_name=self.request.user.username))
+        return serializer.save(writer=self.request.user , customer=Customer.objects.get(mobile =self.request.user.mobile))
 
     def get_serializer_context(self):
         """
@@ -362,7 +362,7 @@ def customer_list (request):
 @api_view(['GET'])
 def customer_detailed (request , username):
 
-    customers = Customer.objects.get(user_name=username)
+    customers = Customer.objects.get(mobile =request.user.mobile)
 
     serializer = AccountSerializer(customers )
 
@@ -487,7 +487,7 @@ class DRF_Create_comment(mixins.ListModelMixin, mixins.CreateModelMixin, generic
         return Response(resp_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
-        return serializer.save(writer=self.request.user , customer=Customer.objects.get(user_name=self.request.user.username))
+        return serializer.save(writer=self.request.user , customer=Customer.objects.get(mobile =self.request.user.mobile))
 
 #@permission_classes([IsAuthenticated])
 class DRF_Create_Category(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
@@ -541,7 +541,7 @@ class PostListCreate(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Ge
         serializer.is_valid(raise_exception=True)
         serializer.writer = self.request.user
         #print('ssssssssss******************' , self.request.user.username)
-        serializer.customer = Customer.objects.get(user_name=self.request.user.username)
+        serializer.customer = Customer.objects.get(mobile =request.user.mobile)
         post = self.perform_create(serializer)
         resp_serializer = PostSerializer(post)
         headers = self.get_success_headers(serializer.data)
@@ -640,7 +640,7 @@ def login_maktab ( request ) :
         form = LoginForm(request.POST)
         if form.is_valid() :
             # cleaned data
-            user = authenticate(username=form.cleaned_data.get('username'),password=form.cleaned_data.get('password'))
+            user = authenticate(mobile=form.cleaned_data.get('mobile'),password=form.cleaned_data.get('password'))
             if user is not None :
                 login(request,user)
                 messages.add_message(request, messages.SUCCESS , 'loged in !')
@@ -658,13 +658,13 @@ def register_maktab(request) :
     form = UserRegisterFormModel(None or request.POST)
     if request.method == "POST" :
         if form.is_valid() :
-            user = User.objects.create_user(form.cleaned_data['username'],form.cleaned_data['email'],form.cleaned_data['password'])
-            check = Customer.objects.filter(email = form.cleaned_data['email'] )
-            if check :
-                messages.add_message(request, messages.INFO , 'this email have an account !')
-                return render (request , 'forms/register.html' , {'form' : form })
+            user = User.objects.create_user(mobile=form.cleaned_data['mobile'],password=form.cleaned_data['password'])
+            #check = Customer.objects.filter(email = form.cleaned_data['email'] )
+            # if check :
+            #     messages.add_message(request, messages.INFO , 'this email have an account !')
+            #     return render (request , 'forms/register.html' , {'form' : form })
             customer = Customer.objects.create(user_name=form.cleaned_data.get('username') , email=form.cleaned_data.get('email'))
-            user = authenticate(username=form.cleaned_data.get('username'),password=form.cleaned_data.get('password'))
+            user = authenticate(user_name=form.cleaned_data.get('username'),password=form.cleaned_data.get('password'))
             if user is not None :
                 login(request,user)
             # user.save()
@@ -698,7 +698,7 @@ def set_new_password ( request ) :
 def dashboard ( request ) :
     user = request.user
     posts = Post.published.filter(writer = user)
-    customer = Customer.objects.get(user_name=user.username)
+    customer = Customer.objects.get(mobile =user.mobile)
     followers = UserConnections.objects.filter(follower=user)
     followings = UserConnections.objects.filter(following=user)
     return render ( request , 'forms/dashboard.html' , {
@@ -721,7 +721,7 @@ def add_new_post (request) :
 
             bad_post = form.save(commit=False)
             bad_post.writer = request.user
-            bad_post.customer = Customer.objects.get(user_name=request.user.username)
+            bad_post.customer = Customer.objects.get(mobile = request.user.mobile)
             form.save()
             
             # user.save()
@@ -884,7 +884,7 @@ def user_page (request , username ) :
             check = False
         # user = get_object_or_404(User, id=news_pk)
         posts = Post.published.filter(writer = user)
-        customer = Customer.objects.get(user_name=username)
+        customer = Customer.objects.get(mobile =user.mobile)
         followers = UserConnections.objects.filter(follower=user)
         followings = UserConnections.objects.filter(following=user)
             #messages.add_message(request, messages.SUCCESS, 'old data - no such page !')
@@ -960,7 +960,7 @@ def search_post_body (request) :
 
 @login_required(login_url='login-mk')
 def edit_personal_info ( request ) :
-    customer = get_object_or_404(Customer , user_name =request.user.username )
+    customer = get_object_or_404(Customer , mobile =request.user.mobile )
     form = CustomerEditForm(instance=customer)
     user = User.objects.get(username =request.user.username)
     if request.method == "POST" :
@@ -996,7 +996,7 @@ class searchPageView(ListView):
 def drafted_posts ( request ) :
     user = request.user
     posts = Post.drafted.filter(writer = user)
-    customer = Customer.objects.get(user_name=user.username)
+    customer = Customer.objects.get(mobile =user.mobile)
     return render ( request , 'forms/drafted_posts.html' , {'posts' :posts , 'user' : user , 'customer' : customer })
 
 def contact_us (request) :
@@ -1024,9 +1024,9 @@ def login_mobile (request) :
     if request.method == "POST" :
         form = MobileLoginForm(request.POST)
         if form.is_valid() :
-            customer = Customer.objects.get(phone = form.cleaned_data.get('mobile') )
-            user_name = customer.user_name
-            user = authenticate(username=user_name,password=form.cleaned_data.get('password'))
+            customer = Customer.objects.get(mobile = form.cleaned_data.get('mobile') )
+            #user_name = customer.user_name
+            user = authenticate(mobile =customer.mobile ,password=form.cleaned_data.get('password'))
             if user is not None :
                 login(request,user)
                 messages.add_message(request, messages.SUCCESS , 'logged in successfuly')
@@ -1056,21 +1056,24 @@ def login_email (request) :
     if request.method == "POST" :
         form = EmailLoginForm(request.POST)
         if form.is_valid() :
-            bad_user = User.objects.get(email = form.cleaned_data.get('email') )
-            user_name = bad_user.username
-            user = authenticate(username=user_name,password=form.cleaned_data.get('password'))
-            if user is not None :
-                login(request,user)
-                messages.add_message(request, messages.SUCCESS , 'logged in successfuly')
-                return redirect(reverse('dashboard'))
+            try :
+                bad_user = User.objects.get(email = form.cleaned_data.get('email') )
+                user_name = bad_user.username
+                user = authenticate(mobile=bad_user.mobile,password=form.cleaned_data.get('password'))
+                if user is not None :
+                    login(request,user)
+                    messages.add_message(request, messages.SUCCESS , 'logged in successfuly')
+                    return redirect(reverse('dashboard'))
+            except :
+                pass
         messages.add_message(request, messages.WARNING , 'wrong phone or password !')
 
     return render (request , 'poroje/login_email.html' , {'form' : form})
 
 @login_required(login_url='login-mk')
 def edit_personal_info_user ( request ) :
-    specified_user = get_object_or_404(User , username =request.user.username )
-    specified_customer = Customer.objects.get(user_name=request.user.username)
+    specified_user = get_object_or_404(User , mobile =request.user.mobile )
+    specified_customer = Customer.objects.get(mobile=request.user.mobile)
     print('injjjjjja' , specified_customer)
     form = UserEditFormModel(instance=specified_user)
     print('username' , request.user.username)
@@ -1270,7 +1273,7 @@ def unlike(request,post_id):
 def addresses (request ):
     
     user = User.objects.get(mobile=request.user.mobile)  
-    customer = Customer.objects.get(user_name =user.username)
+    customer = Customer.objects.get(mobile =user.mobile)
     addresses = Address.objects.filter(customer = customer )
     
     return render ( request , 'poroje/addresses.html' , {
@@ -1284,7 +1287,7 @@ def add_address (request) :
     if request.method == "POST" :
         if form.is_valid() :
             bad_post = form.save(commit=False)
-            bad_post.customer = Customer.objects.get(user_name=request.user.username)
+            bad_post.customer = Customer.objects.get(mobile=request.user.mobile)
             form.save()
             messages.add_message(request, messages.INFO , 'new address was saved !')
             return redirect(reverse('Addresses'))
@@ -1296,7 +1299,7 @@ def edit_address ( request , id ) :
     specified_address = get_object_or_404(Address , id = id )
     form = AddressForm(instance=specified_address)
     if request.method == "POST" :
-        if request.user.username == specified_address.customer.user_name :
+        if request.user.mobile == specified_address.customer.mobile :
             form = AddressForm(request.POST , request.FILES , instance=specified_address)
             if form.is_valid() :
                 # print(form)
@@ -1310,8 +1313,8 @@ def edit_address ( request , id ) :
 @login_required(login_url='login-mk')
 def delete_address(request , id) :
     address = get_object_or_404(Address , id = id )
-    customer = Customer.objects.get(user_name = request.user.username)
-    if request.user.username == address.customer.user_name :
+    customer = Customer.objects.get(mobile = request.user.mobile)
+    if request.user.mobile == address.customer.mobile :
         address.delete()
         messages.add_message(request, messages.INFO , 'address was deleted !')
         return redirect('/post_urls/addresses')

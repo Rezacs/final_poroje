@@ -4,6 +4,6 @@ from custom_login.views import *
 urlpatterns = [
     path('register' , register , name='register' ) ,
     path('mobile_login' , mobile_login , name='mobile_login' ) ,
-    path('dashboard' , dashboard , name='dashboard' ) ,
+    path('dashboard' , dashboard , name='mobile-dashboard' ) ,
     path('verify' , verify , name='verify' ) ,
 ]

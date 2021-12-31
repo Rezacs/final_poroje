@@ -13,11 +13,11 @@ def mobile_login ( request ) :
             mobile = request.POST.get('mobile')
             user = MyUser.objects.get(mobile=mobile)
             login(request , user)
-            return HttpResponseRedirect(reverse('dashboard'))
+            return HttpResponseRedirect(reverse('mobile-dashboard'))
     return render ( request , 'mobile_login.html')
 
 def dashboard ( request ) :
-    return render ( request , 'dashboard.html')
+    return render ( request , 'mobile-dashboard.html')
 
 def register ( request ) :
     form = RegisterForm
