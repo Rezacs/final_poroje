@@ -1,12 +1,10 @@
-
-
-
 # from custom_login.models import *
-
 # User = MyUser
-from django.contrib.auth import get_user_model
 
+from django.contrib.auth import get_user_model
 User = get_user_model()
+
+
 
 from django.http import response 
 from django.http.response import HttpResponse, HttpResponseNotFound
@@ -862,9 +860,10 @@ def delete_post(request , post_id) :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'poroje/delete_post.html',{'form' : form , 'post' : post})
 
-
+User = get_user_model()
 def user_list ( request ) :
     #User=get_user_model()
+    #users = get_user_model().objects.all()
     users = User.objects.all()
     return render ( request , 'poroje/user_list.html' , {'users' :users }) 
 

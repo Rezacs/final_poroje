@@ -18,13 +18,13 @@ class Customer ( models.Model ) :
     ]
     first_name = models.CharField(max_length=300 ,blank=True , null=True)
     last_name = models.CharField(max_length=300,blank=True , null=True)
-    user_name = models.CharField(max_length=100 , unique=True )
+    user_name = models.CharField(max_length=100 , unique=True ,blank=True , null=True )
     desc = models.TextField(blank=True , null=True)
     # country = models.CharField(max_length=300)
     # city = models.CharField(max_length=300)
     # street = models.CharField(max_length=300)
     # zip = models.PositiveIntegerField()
-    phone = models.PositiveIntegerField(blank=True , null=True , unique=True)
+    mobile = models.CharField(max_length=300, blank=True , null=True , unique=True)
     image = models.ImageField(upload_to='uploads',null=True,blank=True)
     gender = models.CharField(
         max_length=3,
@@ -45,8 +45,8 @@ class Customer ( models.Model ) :
     class Meta:
         ordering = ['user_name']
 
-    def __str__(self) -> str:
-        return self.user_name
+    def __str__(self):
+        return str(self.mobile)
 
 class Payment ( models.Model ) :
     # many to one

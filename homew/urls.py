@@ -43,7 +43,6 @@ urlpatterns = [
     # path('about' , TemplateView)
     path('post-detail-view/<int:pk>/', PostDetailView.as_view()),
     path('class_category_list' , class_category_list , name='category-list'),
-    path('admin/', admin.site.urls),
     path('articles/', include('articles.urls')),
     path('posts/<str:given_slug>/', class_post_slug_view, name='show_post'),
     path('class_category_posts/<str:category_name>',class_category_posts),
