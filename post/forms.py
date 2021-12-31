@@ -96,7 +96,7 @@ class UserRegisterFormModel (forms.ModelForm ) :
 class UserEditFormModel (forms.ModelForm ) :
     class Meta :
         model = User
-        fields = ['username' , 'email' ]
+        fields = ['username' , 'email' , 'mobile' ]
         
 class SetNewPasswordForm (forms.Form ):
     password = forms.CharField(widget=forms.PasswordInput , label='old password')
@@ -186,7 +186,7 @@ class LikeCommentForm (forms.ModelForm) :
 class CustomerEditForm (forms.ModelForm) :
     class Meta :
         model = Customer
-        exclude = ['user_name' , 'email']
+        exclude = ['user_name' , 'email' , 'mobile']
 
 class AddressForm (forms.ModelForm) :
     class Meta :

@@ -711,6 +711,8 @@ def dashboard ( request ) :
     customer = Customer.objects.get(mobile =user.mobile)
     followers = UserConnections.objects.filter(follower=user)
     followings = UserConnections.objects.filter(following=user)
+    if request.user.username == None :
+        messages.add_message(request, messages.WARNING , 'set your username so others can view your page')
     return render ( request , 'forms/dashboard.html' , {
         'posts' :posts,
         'user' : user,
@@ -974,7 +976,7 @@ def search_post_body (request) :
 def edit_personal_info ( request ) :
     customer = get_object_or_404(Customer , mobile =request.user.mobile )
     form = CustomerEditForm(instance=customer)
-    user = User.objects.get(username =request.user.username)
+    user = User.objects.get(mobile =request.user.mobile)
     if request.method == "POST" :
         form = CustomerEditForm(request.POST , request.FILES , instance=customer)
         if form.is_valid() :
@@ -1094,6 +1096,7 @@ def edit_personal_info_user ( request ) :
         if form.is_valid() :
             form.save()
             specified_customer.user_name = form.cleaned_data.get('username')
+            specified_customer.mobile = form.cleaned_data.get('mobile')
             specified_customer.email = form.cleaned_data.get('email')
             specified_customer.save()
             print('ussssssss*******' , specified_customer)
