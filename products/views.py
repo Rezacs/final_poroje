@@ -164,6 +164,25 @@ def edit_shop ( request , id ) :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_shop.html',{'form' : form , 'specified_post' : specified_shop})
 
+@permission_classes([IsAuthenticated])
+class AddProduct(CreateView):
+
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        form = AddProductForm(None or self.request.POST , self.request.FILES)
+        shop = Shop.accepted.filter(id = self.kwargs['ids'] )
+        return render (request , 'set_shop/new_product.html' , {'form' : form , 'shop' : shop})
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = AddProductForm(None or self.request.POST , self.request.FILES)
+        shop = Shop.accepted.filter(id = self.kwargs['ids'] )
+        bad_product = form.save(commit=False)
+        bad_product.shop = shop[0]  #request.user
+        bad_product.save()
+        messages.add_message(request, messages.INFO , 'new product was saved !')
+        return redirect(f'/onlineshop/view_shop/{shop[0].id }')
+
 @login_required(login_url='login-mk')
 def add_product (request , ids ) :
     form = AddProductForm(None or request.POST , request.FILES)
@@ -340,19 +359,6 @@ def add_to_basket (request , id ) :
 
     messages.add_message(request, messages.SUCCESS , 'product added to basket !')
     return redirect(f'/onlineshop/product_detail/{product.id}')
-
-
-
-@permission_classes([IsAuthenticated])
-class PostListFilter(CreateView):
-    
-    def get(self, request, *args, **kwargs):
-        self.object = None
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        return super().post(request, *args, **kwargs)
 
 
 
