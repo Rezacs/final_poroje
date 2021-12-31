@@ -1,10 +1,6 @@
 # from custom_login.models import *
 # User = MyUser
 
-from django.contrib.auth import get_user_model
-User = get_user_model()
-
-
 
 from django.http import response 
 from django.http.response import HttpResponse, HttpResponseNotFound
@@ -30,6 +26,9 @@ from django.contrib.auth import authenticate , login , logout
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 from post.serializers import *
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 def class_today_time (request) :
     return HttpResponse(f'today is : {datetime.today()}')
@@ -860,7 +859,7 @@ def delete_post(request , post_id) :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'poroje/delete_post.html',{'form' : form , 'post' : post})
 
-User = get_user_model()
+
 def user_list ( request ) :
     #User=get_user_model()
     #users = get_user_model().objects.all()
@@ -1270,7 +1269,7 @@ def unlike(request,post_id):
 @login_required(login_url='login-mk')
 def addresses (request ):
     
-    user = User.objects.get(username=request.user.username)  
+    user = User.objects.get(mobile=request.user.mobile)  
     customer = Customer.objects.get(user_name =user.username)
     addresses = Address.objects.filter(customer = customer )
     

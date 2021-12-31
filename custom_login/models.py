@@ -6,6 +6,7 @@ from custom_login.myusermanager import *
 
 class MyUser ( AbstractUser ) :
     username = None
+    user_name = models.CharField(max_length=30 , unique=True , blank=True , null=True)
     mobile = models.CharField(max_length=11 , unique=True)
     otp = models.PositiveIntegerField(blank=True , null=True)
     otp_created_time = models.DateTimeField(auto_now=True)
