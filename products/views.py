@@ -104,7 +104,7 @@ def add_Shop ( request ) :
             shop.owner = request.user
             shop.customer= Customer.objects.get(user_name = request.user.username)
             shop.save()
-            messages.add_message(request, messages.SUCCESS, 'comment was saved !')
+            messages.add_message(request, messages.SUCCESS, 'shop was saved !')
             return redirect(reverse('shop-dashboard'))
     return render(request,'set_shop/shop_form.html' ,{
         'form' : form
