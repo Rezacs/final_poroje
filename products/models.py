@@ -49,7 +49,11 @@ class Shop ( models.Model ) :
 
     def slugg(self):
         time = str(datetime.datetime.now())
-        trash = str(self.customer.user_name+'-Shop-'+self.name+time)
+        #trash = str(self.customer.user_name+'-Shop-'+self.name+time)
+        if self.customer.user_name :
+            trash = str(self.customer.user_name+'-'+self.title+time)
+        else :
+            trash = str('NoUserName'+'-'+self.title+time)
         return slugify(trash)
     def save(self , *args , **kwargs) :
         if self.slug == None :

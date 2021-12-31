@@ -104,7 +104,10 @@ class Post(CommonInfo):
 
     def slugg(self):
         time = str(datetime.datetime.now())
-        trash = str(self.customer.user_name+'-'+self.title+time)
+        if self.customer.user_name :
+            trash = str(self.customer.user_name+'-'+self.title+time)
+        else :
+            trash = str('NoUserName'+'-'+self.title+time)
         return slugify(trash)
     def save(self , *args , **kwargs) :
         if self.slug == None :

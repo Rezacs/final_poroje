@@ -91,7 +91,7 @@ class EditUsername( forms.Form ) :
 class UserRegisterFormModel (forms.ModelForm ) :
     class Meta :
         model = User
-        fields = ['mobile' , 'password']
+        fields = ['mobile' , 'username' ,  'password']
 
 class UserEditFormModel (forms.ModelForm ) :
     class Meta :

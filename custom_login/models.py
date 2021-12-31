@@ -18,6 +18,9 @@ class MyUser ( AbstractUser ) :
 
     REQUIRED_FIELDS = []
 
+    def __str__(self):
+        return str(self.username)
+
     backend = 'custom_login.mybackend.ModelBackend'
 
     #objects = models.Manager()

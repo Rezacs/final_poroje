@@ -1,5 +1,6 @@
 # from custom_login.models import *
 # User = MyUser
+from django.http import HttpResponseRedirect
 
 
 from django.http import response 
@@ -658,13 +659,22 @@ def register_maktab(request) :
     form = UserRegisterFormModel(None or request.POST)
     if request.method == "POST" :
         if form.is_valid() :
-            user = User.objects.create_user(mobile=form.cleaned_data['mobile'],password=form.cleaned_data['password'])
+            user = User.objects.create_user(
+                mobile=form.cleaned_data['mobile'],
+                password=form.cleaned_data['password'],
+                username=form.cleaned_data['username']
+            )
             #check = Customer.objects.filter(email = form.cleaned_data['email'] )
             # if check :
             #     messages.add_message(request, messages.INFO , 'this email have an account !')
             #     return render (request , 'forms/register.html' , {'form' : form })
-            customer = Customer.objects.create(user_name=form.cleaned_data.get('username') , email=form.cleaned_data.get('email'))
-            user = authenticate(user_name=form.cleaned_data.get('username'),password=form.cleaned_data.get('password'))
+            #user_name=form.cleaned_data.get('username') ,
+            # customer = Customer.objects.create(
+                
+            #     email=form.cleaned_data.get('email') ,
+            #     mobile=form.cleaned_data['mobile']
+            # )
+            user = authenticate(mobile=form.cleaned_data['mobile'],password=form.cleaned_data.get('password'))
             if user is not None :
                 login(request,user)
             # user.save()
@@ -872,7 +882,9 @@ def user_page (request , username ) :
         if next : 
             return redirect(request.GET.get('next'))
         else :
-            return HttpResponse('old data - no such page !')
+            messages.add_message(request, messages.INFO , 'you cant access that page !')
+            return redirect(request.META.get('HTTP_REFERER'))
+            #return HttpResponse('old data - no such page !')
             # messages.add_message(request, messages.SUCCESS, 'old data - no such page !')
             # return redirect(request.GET.get('next'))
     else :
