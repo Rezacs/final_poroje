@@ -275,7 +275,12 @@ class EditProduct(UpdateView):
     #exclude = ['shop']
     #form = AddProductForm()
     template_name = 'set_shop/edit_product.html'
-    success_url = reverse_lazy('Detail_product')
+    #success_url = f'/onlineshop/product_detail/{pk}'
+
+    # def post(self, request, *args, **kwargs):
+    #     shop = Shop.accepted.filter(id = self.kwargs['pk'] )
+    #     messages.add_message(request, messages.SUCCESS, 'product was edited !')
+    #     return redirect(f'/onlineshop/view_shop/{shop[0].id }')
     
 
 
