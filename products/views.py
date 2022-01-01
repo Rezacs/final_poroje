@@ -98,6 +98,9 @@ class ShopDashboard (ListView):
     model = Shop
     context_object_name = 'shops'
     template_name = 'set_shop/dashboard.html'
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(owner = self.request.user)
     def get_context_data(self, **kwargs):
         context = super(ShopDashboard, self).get_context_data(**kwargs)
         user = self.request.user
@@ -112,7 +115,6 @@ class ShopDashboard (ListView):
             'followings':followings,
         })
         return context
-
 
 @login_required(login_url='login-mk')
 def shop_dashboard ( request ) :
@@ -139,7 +141,6 @@ class AddShop(CreateView):
     success_url = '/dashboard'
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.status = 'load'
         self.object.owner = self.request.user
         self.object.customer= Customer.objects.get(mobile = self.request.user.mobile)
         self.object.save()
@@ -185,32 +186,24 @@ def delete_shop(request,id):
     else :
         return HttpResponse('you dont have permission to do this !')
 
-
+#mixin_dispatch
 class EditShop(UpdateView):
     model = Shop
     form_class = AddShopForm
     template_name = 'set_shop/edit_shop.html'
     context_object_name = 'specified_post'
     #success_url = redirect(f'/onlineshop/view_shop/{get_object().id}')
-
     def update(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.user == self.object.owner :    
-            self.object.status = 'load'
             self.object.save()
             messages.add_message(request, messages.SUCCESS, 'shop was edited !')
-            #return redirect('/onlineshop/dashboard')
             return redirect(f'/onlineshop/view_shop/{self.get_object().id }')
         else :
             return HttpResponse('you dont have permission to do this !')
 
     def get_success_url(self):
         return reverse('Shop_Page', kwargs={'pk': self.get_object().id})
-
-    # def post(self, request, *args, **kwargs):
-    #     shop = Shop.accepted.filter(id = self.kwargs['pk'] )
-    #     messages.add_message(request, messages.SUCCESS, 'product was edited !')
-    #     return redirect(f'/onlineshop/view_shop/{self.get_object().id }')
 
 @login_required(login_url='login-mk')
 def edit_shop ( request , id ) :
@@ -436,8 +429,8 @@ def user_shop_page_view ( request , username ) :
 @login_required(login_url='login-mk')
 def add_to_basket (request , id ) :
     product = Products.objects.get ( id = id )
-    if product.quantity < 1 :
-        messages.add_message(request, messages.SUCCESS, 'not enough left for you !')
+    if product.quantity < 1 or product.shop.status != 'chek' :
+        messages.add_message(request, messages.SUCCESS, 'not enough left for you - or shop is banned !')
         return redirect(f'/onlineshop/product_detail/{product.id}')
     basket = Basket.objects.filter(owner = request.user).filter(status = 'live')
     if basket :

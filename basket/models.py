@@ -79,6 +79,17 @@ class Basket ( models.Model ) :
         return f"{self.owner} factor on {self.order_date}"
 
 class BasketItem ( models.Model ) :
+    STATUS_CHOICES = [ 
+        ('done' , 'Fully completed'),
+        ('load' , 'in progress'),
+        ('canc' , 'canceled'),
+    ]
+    status = models.CharField(
+        max_length=4,
+        choices=STATUS_CHOICES,
+        blank=True,
+        null=True
+    )
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     basket = models.ForeignKey(Basket, on_delete=models.CASCADE)

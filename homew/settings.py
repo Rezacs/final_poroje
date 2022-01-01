@@ -66,13 +66,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'homew.urls'
 
-import os
-SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+# import os
+# SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+#os.path.join(SETTINGS_PATH, 'templates')
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(SETTINGS_PATH, 'templates')], # injjjja
+        'DIRS': [], # injjjja
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -180,6 +181,8 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'custom_login.MyUser'
+
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend' ,
     'custom_login.mybackend.ModelBackend'

@@ -55,6 +55,10 @@ class Shop ( models.Model ) :
             trash = str('NoUserName'+'-Shop-'+self.name+time)
         return slugify(trash)
     def save(self , *args , **kwargs) :
+        #self.request
+        #self.owner = self.request.user
+        #ShopAdmin.save_model()
+        self.status = 'load'
         if self.slug == None :
             if Shop.objects.filter(name = self.name).exists() :
                 extra = str(randint(1,1000))

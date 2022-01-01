@@ -60,6 +60,10 @@ class ShopAdmin(admin.ModelAdmin) :
 
     actions = [make_verified]
 
+    def save_model(self, request, obj, form, change):
+        obj.owner = request.user
+        super().save_model(request, obj, form, change)
+
 class ProductAdmin(admin.ModelAdmin) :
     list_display = ('name' ,'desc', 'shop' , 'price','quantity' , 'show_image' , 'created_on')
     list_filter = ( 'price' , 'created_on' , 'shop' , 'category')
