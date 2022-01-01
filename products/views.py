@@ -266,6 +266,19 @@ def delete_product_comment(request,comment_id):
     else :
         return HttpResponse('you dont have permission to do this !')
 
+from django.urls import reverse_lazy
+
+class EditProduct(UpdateView):
+    model = Products
+    #fields = ['name']
+    form_class = AddProductForm
+    #exclude = ['shop']
+    #form = AddProductForm()
+    template_name = 'set_shop/edit_product.html'
+    success_url = reverse_lazy('Detail_product')
+    
+
+
 @login_required(login_url='login-mk')
 def edit_product ( request , id ) :
     specified_product = get_object_or_404(Products , id =id )

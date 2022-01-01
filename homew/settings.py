@@ -66,10 +66,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'homew.urls'
 
+import os
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [], # injjjja
+        'DIRS': [os.path.join(SETTINGS_PATH, 'templates')], # injjjja
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
