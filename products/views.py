@@ -79,7 +79,39 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView,ListView,DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
+
+# def shop_owner_view ( request , id) :
+#     user = request.user
+#     shop = Shop.objects.get(id = id)
+#     products = Products.objects.filter (shop = shop)
+#     return render ( request , 'set_shop/Shop_view.html' , {
+#         'post' :shop,
+#         'products' : products,
+#     })
+
+#@permission_classes([IsAuthenticated])
+#from django.utils.decorators import method_decorator
+#@method_decorator(login_required, name='dispatch')
+class ShopDashboard (ListView):
+    model = Shop
+    context_object_name = 'shops'
+    template_name = 'set_shop/dashboard.html'
+    def get_context_data(self, **kwargs):
+        context = super(ShopDashboard, self).get_context_data(**kwargs)
+        user = self.request.user
+        shops = Shop.not_deleted.filter(owner = user)
+        customer = Customer.objects.get(user_name=user.username)
+        followers = UserConnections.objects.filter(follower=user)
+        followings = UserConnections.objects.filter(following=user)
+        context.update({
+            'user' : user,
+            'customer':customer,
+            'followers':followers,
+            'followings':followings,
+        })
+        return context
 
 
 @login_required(login_url='login-mk')
@@ -96,6 +128,22 @@ def shop_dashboard ( request ) :
         'followers':followers,
         'followings':followings,
     })
+
+class AddShop(CreateView):
+    model = Shop
+    #fields = ['name']
+    form_class = AddShopForm
+    #exclude = ['shop']
+    #form = AddProductForm()
+    template_name = 'set_shop/shop_form.html'
+    success_url = '/dashboard'
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.status = 'load'
+        self.object.owner = self.request.user
+        self.object.customer= Customer.objects.get(mobile = self.request.user.mobile)
+        self.object.save()
+        return redirect(reverse('shop-dashboard'))
 
 @login_required(login_url='login-mk')
 def add_Shop ( request ) :
@@ -114,29 +162,20 @@ def add_Shop ( request ) :
         'form' : form
     })
 
-def shop_owner_view ( request , id) :
-    user = request.user
-    shop = Shop.objects.get(id = id)
-    products = Products.objects.filter (shop = shop)
-    return render ( request , 'set_shop/Shop_view.html' , {
-        'post' :shop,
-        'products' : products,
-    })
-
-class ShopDetailView(DetailView):
+class DeleteShop(DeleteView):
     model = Shop
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['products'] = Products.objects.filter(shop__id = self.pk_url_kwarg)
-    #     return context
-
-    template_name = 'set_shop/Shop_view.html'
-    context_object_name = 'post'
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.user == self.object.owner :    
+            self.object.status = 'dele'
+            self.object.save()
+            messages.add_message(request, messages.SUCCESS, 'shop was deleted !')
+            return redirect('/onlineshop/dashboard')
+        else :
+            return HttpResponse('you dont have permission to do this !')
 
 @login_required(login_url='login-mk')
 def delete_shop(request,id):
-    
     shop = get_object_or_404(Shop ,id=id)
     if request.user == shop.owner :    
         shop.status = 'dele'
@@ -145,6 +184,33 @@ def delete_shop(request,id):
         return redirect('/onlineshop/dashboard')
     else :
         return HttpResponse('you dont have permission to do this !')
+
+
+class EditShop(UpdateView):
+    model = Shop
+    form_class = AddShopForm
+    template_name = 'set_shop/edit_shop.html'
+    context_object_name = 'specified_post'
+    #success_url = redirect(f'/onlineshop/view_shop/{get_object().id}')
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.user == self.object.owner :    
+            self.object.status = 'load'
+            self.object.save()
+            messages.add_message(request, messages.SUCCESS, 'shop was edited !')
+            #return redirect('/onlineshop/dashboard')
+            return redirect(f'/onlineshop/view_shop/{self.get_object().id }')
+        else :
+            return HttpResponse('you dont have permission to do this !')
+
+    def get_success_url(self):
+        return reverse('Shop_Page', kwargs={'pk': self.get_object().id})
+
+    # def post(self, request, *args, **kwargs):
+    #     shop = Shop.accepted.filter(id = self.kwargs['pk'] )
+    #     messages.add_message(request, messages.SUCCESS, 'product was edited !')
+    #     return redirect(f'/onlineshop/view_shop/{self.get_object().id }')
 
 @login_required(login_url='login-mk')
 def edit_shop ( request , id ) :
@@ -164,7 +230,7 @@ def edit_shop ( request , id ) :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_shop.html',{'form' : form , 'specified_post' : specified_shop})
 
-@permission_classes([IsAuthenticated])
+
 class AddProduct(CreateView):
 
     def get(self, request, *args, **kwargs):
@@ -182,6 +248,20 @@ class AddProduct(CreateView):
         bad_product.save()
         messages.add_message(request, messages.INFO , 'new product was saved !')
         return redirect(f'/onlineshop/view_shop/{shop[0].id }')
+
+
+class ShopView (DetailView):
+    model = Shop
+    context_object_name = 'post'
+    template_name = 'set_shop/Shop_view.html'
+    def get_context_data(self, **kwargs):
+        context = super(ShopView, self).get_context_data(**kwargs)
+        self.object = self.get_object()
+        products = Products.objects.filter (shop = self.object)
+        context.update({
+            'products' : products,
+        })
+        return context
 
 @login_required(login_url='login-mk')
 def add_product (request , ids ) :
@@ -266,8 +346,6 @@ def delete_product_comment(request,comment_id):
     else :
         return HttpResponse('you dont have permission to do this !')
 
-from django.urls import reverse_lazy
-
 class EditProduct(UpdateView):
     model = Products
     #fields = ['name']
@@ -277,13 +355,11 @@ class EditProduct(UpdateView):
     template_name = 'set_shop/edit_product.html'
     #success_url = f'/onlineshop/product_detail/{pk}'
 
-    # def post(self, request, *args, **kwargs):
-    #     shop = Shop.accepted.filter(id = self.kwargs['pk'] )
-    #     messages.add_message(request, messages.SUCCESS, 'product was edited !')
-    #     return redirect(f'/onlineshop/view_shop/{shop[0].id }')
+    def post(self, request, *args, **kwargs):
+        shop = Shop.accepted.filter(id = self.kwargs['pk'] )
+        messages.add_message(request, messages.SUCCESS, 'product was edited !')
+        return redirect(f'/onlineshop/view_shop/{shop[0].id }')
     
-
-
 @login_required(login_url='login-mk')
 def edit_product ( request , id ) :
     specified_product = get_object_or_404(Products , id =id )
@@ -341,9 +417,10 @@ def add_product_comment ( request , comment_id ) :
 
     return render ( request , 'set_shop/add_comment.html' , {'form' : form , 'post' : product} )
 
-def shop_page_view ( request , username ) :
+
+def user_shop_page_view ( request , username ) :
     pointed_user = User.objects.get(username = username)
-    shops = Shop.not_deleted.filter(owner = pointed_user)
+    shops = Shop.accepted.filter(owner = pointed_user)
     customer = Customer.objects.get(user_name=username)
     followers = UserConnections.objects.filter(follower=pointed_user)
     followings = UserConnections.objects.filter(following=pointed_user)
@@ -379,7 +456,6 @@ def add_to_basket (request , id ) :
     return redirect(f'/onlineshop/product_detail/{product.id}')
 
 
-@permission_classes([IsAuthenticated])
 class SeeBasket(View):
 
     def get(self, request, *args, **kwargs):
@@ -399,3 +475,24 @@ class SeeBasket(View):
         return redirect(f'/onlineshop/view_shop/{shop[0].id }')
 
 
+class ShopView (DetailView):
+    model = Shop
+    context_object_name = 'post'
+    template_name = 'set_shop/Shop_view.html'
+    def get_context_data(self, **kwargs):
+        context = super(ShopView, self).get_context_data(**kwargs)
+        self.object = self.get_object()
+        products = Products.objects.filter (shop = self.object)
+        context.update({
+            'products' : products,
+        })
+        return context
+
+def shop_owner_view ( request , id) :
+    user = request.user
+    shop = Shop.objects.get(id = id)
+    products = Products.objects.filter (shop = shop)
+    return render ( request , 'set_shop/Shop_view.html' , {
+        'post' :shop,
+        'products' : products,
+    })
