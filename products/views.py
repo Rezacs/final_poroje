@@ -75,15 +75,6 @@ from django.views.generic import TemplateView,ListView,DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-# def shop_owner_view ( request , id) :
-#     user = request.user
-#     shop = Shop.objects.get(id = id)
-#     products = Products.objects.filter (shop = shop)
-#     return render ( request , 'set_shop/Shop_view.html' , {
-#         'post' :shop,
-#         'products' : products,
-#     })
-
 #@permission_classes([IsAuthenticated])
 #from django.utils.decorators import method_decorator
 #@method_decorator(login_required, name='dispatch')
@@ -231,19 +222,6 @@ class AddProduct(View):
         bad_product.save()
         messages.add_message(request, messages.INFO , 'new product was saved !')
         return redirect(f'/onlineshop/view_shop/{shop[0].id }')
-
-class ShopView (DetailView):
-    model = Shop
-    context_object_name = 'post'
-    template_name = 'set_shop/Shop_view.html'
-    def get_context_data(self, **kwargs):
-        context = super(ShopView, self).get_context_data(**kwargs)
-        self.object = self.get_object()
-        products = Products.objects.filter (shop = self.object)
-        context.update({
-            'products' : products,
-        })
-        return context
 
 def add_product (request , ids ) :
     form = AddProductForm(None or request.POST , request.FILES)
