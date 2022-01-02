@@ -346,6 +346,21 @@ def edit_product ( request , id ) :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_product.html',{'form' : form , 'specified_post' : specified_product})
 
+class EditProductComment (UpdateView):
+    model = Products_Comments
+    form_class = ProductCommentModelForm
+    template_name = 'set_shop/edit_comment.html'
+    #success_url = f'/onlineshop/product_detail/{pk}'
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(EditProductComment, self).get_object()
+        if not obj.writer == self.request.user:
+            return HttpResponse('you dont have permission to do this !')
+        return obj
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'product was edited !')
+        return reverse('Detail_product', kwargs={'id': self.get_object().products.id})
+
 def edit_comment ( request , id ) :
     comment = get_object_or_404(Products_Comments , id =id )
     product = comment.products

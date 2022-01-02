@@ -17,7 +17,7 @@ urlpatterns = [
     path('product_detail/<int:id>', class_product_detail , name='Detail_product'),
     path('delete_product_comment/<int:pk>',login_required(DeleteProductComment.as_view() , login_url='login-mk'),name="delete-product-comment"),
     path('edit_product/<int:pk>', EditProduct.as_view() , name='Edit_product'),
-    path('edit_product_comment/<int:id>', login_required(edit_comment , login_url='login-mk') , name='Edit_product_comment'),
+    path('edit_product_comment/<int:pk>', login_required(EditProductComment.as_view() , login_url='login-mk') , name='Edit_product_comment'),
     path('Shop/<str:username>', user_shop_page_view , name='Shop_Page'),
     path('add_product_comment/<int:comment_id>', add_product_comment , name='Product-comment-reply'),
     path('add_product_basket/<int:id>', add_to_basket , name='Add-Product-To-Basket'),
