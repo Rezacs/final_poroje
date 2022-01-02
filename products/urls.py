@@ -22,4 +22,7 @@ urlpatterns = [
     path('add_product_comment/<int:comment_id>', add_product_comment , name='Product-comment-reply'),
     path('add_product_basket/<int:id>', add_to_basket , name='Add-Product-To-Basket'),
     path('basket', basket , name='Basket'),
+    path('edit_basket/<int:pk>', edit_basket , name='Edit-Basket'),
+    path('delete_from_basket/<int:pk>', delete_product_from_basket , name='Delete-From-Basket'),
+    path('pay_baset/<int:pk>', checkout_basket , name='Pay-Basket'),
 ]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)

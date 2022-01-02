@@ -1295,7 +1295,7 @@ def addresses (request ):
     
     user = User.objects.get(mobile=request.user.mobile)  
     customer = Customer.objects.get(mobile =user.mobile)
-    addresses = Address.objects.filter(customer = customer )
+    addresses = Address.objects.filter(owner = user )
     
     return render ( request , 'poroje/addresses.html' , {
         'user':user,
@@ -1308,7 +1308,7 @@ def add_address (request) :
     if request.method == "POST" :
         if form.is_valid() :
             bad_post = form.save(commit=False)
-            bad_post.customer = Customer.objects.get(mobile=request.user.mobile)
+            bad_post.owner = User.objects.get(mobile=request.user.mobile)
             form.save()
             messages.add_message(request, messages.INFO , 'new address was saved !')
             return redirect(reverse('Addresses'))

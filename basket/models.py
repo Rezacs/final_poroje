@@ -97,6 +97,10 @@ class BasketItem ( models.Model ) :
     def __str__(self) -> str:
         return f"{self.product} factor {self.added_date}"
 
+    def save(self , *args , **kwargs) :
+        self.basket.price += ( self.quantity * self.product.price)
+        super(BasketItem,self).save(*args , **kwargs)
+
 class Order ( models.Model ) :
     basket = models.ForeignKey(Basket, on_delete=models.CASCADE , default=None)
     desc = models.TextField(blank=True , help_text="Enter a description for your selected prod.")

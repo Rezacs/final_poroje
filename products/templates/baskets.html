@@ -39,20 +39,23 @@
     <h1> your baskets : </h1>
     <hr>
     {% for basket in baskets %}
-    ss
-        <div class="row">
-            <div class="col-md-12">
-                {% if basket.status == 'live' %}
-                <span style="color: red;">your live basket :</span>
-                {% endif %}
+    <div class="row">
+        {% if basket.status == 'live' %}
+        <span style="color: red;">your live basket :</span>
+        {% endif %}
+            <div class="col-md-6">
                 <br>
                     {% for item in items %}
                         {% if item.basket == basket %}
-                        <a href="/onlineshop/product_detail/{{item.product.id}}">
-                            {{item.product.name}}
-                        </a>
-                        --> {{item.quantity}} , maximum you can buy : {{item.product.quantity}}
-                            <br>
+                        <p>
+                            <a href="/onlineshop/product_detail/{{item.product.id}}">
+                                {{item.product.name}}
+                            </a>
+                            --> {{item.quantity}} , maximum you can buy : {{item.product.quantity}}
+                            <a class="btn btn-sm btn-danger" href="{% url 'Delete-From-Basket' pk=item.product.id %}">
+                                <small>Remove from basket</small>
+                            </a>
+                        </p>
                         {% endif %}
                     {% endfor %}
                     <h6 style="color: brown;">
@@ -74,6 +77,16 @@
                     <h3>body : {{comment.body}}</h3>
                     <h6>{{basket.created_on}}</h6>
 
+            </div>
+            <div class="col-md-6">
+                total price : {{basket.price}}
+                <br>
+                <a class="btn btn-sm btn-primary" href="{% url 'Edit-Basket' pk=basket.id %}">
+                    <small>Edit Basket</small>
+                </a>
+                <a class="btn btn-sm btn-warning" href="{% url 'Pay-Basket' pk=basket.id %}">
+                    <small>Pay and Order</small>
+                </a>
             </div>
         </div>
 

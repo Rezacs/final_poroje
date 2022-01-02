@@ -56,8 +56,9 @@ class Payment ( models.Model ) :
     class Meta:
         ordering = ['customer']
 
+
 class Address ( models.Model ) :
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    owner = models.ForeignKey("custom_login.MyUser", on_delete=models.CASCADE , blank=True , null=True )
     title = models.CharField(max_length=150)
     country = models.CharField(max_length=150)
     city = models.CharField(max_length=150)
@@ -67,4 +68,7 @@ class Address ( models.Model ) :
     zip = models.CharField(max_length=150)
     desc = models.TextField(blank=True , null=True)
     created_on = models.DateTimeField( auto_now_add=True ,null=True,blank=True )
+
+    def __str__(self):
+        return f"{self.title}-{self.street}-{self.alley}"
 

@@ -191,5 +191,5 @@ class CustomerEditForm (forms.ModelForm) :
 class AddressForm (forms.ModelForm) :
     class Meta :
         model = Address
-        exclude = ['customer']
+        exclude = ['owner']
 
