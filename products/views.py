@@ -99,11 +99,12 @@ class ShopDashboard (ListView):
             'followings':followings,
         })
         return context
+
 @login_required(login_url='login-mk')
 def shop_dashboard ( request ) :
     user = request.user
     shops = Shop.not_deleted.filter(owner = user)
-    customer = Customer.objects.get(user_name=user.username)
+    customer = Customer.objects.get(mobile=user.mobile)
     followers = UserConnections.objects.filter(follower=user)
     followings = UserConnections.objects.filter(following=user)
     return render ( request , 'set_shop/dashboard.html' , {
@@ -398,6 +399,29 @@ def add_product_comment ( request , comment_id ) :
 
     return render ( request , 'set_shop/add_comment.html' , {'form' : form , 'post' : product} )
 
+class UserShopsView (ListView):
+    model = Shop
+    context_object_name = 'shops'
+    template_name = 'set_shop/user_shops_view.html'
+    def get_queryset(self):
+        pointed_user = User.objects.get(username = self.kwargs['username'])
+        queryset = super().get_queryset()
+        return queryset.filter(owner = pointed_user)
+    def get_context_data(self, **kwargs):
+        context = super(UserShopsView, self).get_context_data(**kwargs)
+        user = self.request.user
+        #shops = Shop.not_deleted.filter(owner = user)
+        customer = Customer.objects.get(mobile=user.mobile)
+        followers = UserConnections.objects.filter(follower=user)
+        followings = UserConnections.objects.filter(following=user)
+        context.update({
+            'user' : user,
+            'customer':customer,
+            'followers':followers,
+            'followings':followings,
+        })
+        return context
+
 def user_shop_page_view ( request , username ) :
     pointed_user = User.objects.get(username = username)
     shops = Shop.accepted.filter(owner = pointed_user)
@@ -470,4 +494,22 @@ def shop_owner_view ( request , id) :
     return render ( request , 'set_shop/Shop_view.html' , {
         'post' :shop,
         'products' : products,
+    })
+
+#@login_required(login_url='login-mk')
+def basket ( request ) :
+    user = request.user
+    baskets = Basket.objects.filter(owner = user)
+    live = Basket.objects.filter(status = 'live')
+    items = BasketItem.objects.filter(basket__in=baskets)
+    live_items = items.filter(basket__status='live')
+
+    customer = Customer.objects.get(user_name=user.username)
+    return render ( request , 'baskets.html' , {
+        'baskets' :baskets,
+        'user' : user,
+        'customer':customer,
+        'items' : items,
+        'live' : live,
+        'live_items' : live_items
     })
