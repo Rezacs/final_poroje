@@ -370,9 +370,9 @@ def edit_product ( request , id ) :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_product.html',{'form' : form , 'specified_post' : specified_product})
 
-@login_required(login_url='login-mk')
-def edit_comment ( request , comment_id ) :
-    comment = get_object_or_404(Products_Comments , id =comment_id )
+
+def edit_comment ( request , id ) :
+    comment = get_object_or_404(Products_Comments , id =id )
     product = comment.products
     # print(request.user)
     # print(request.user.email)
