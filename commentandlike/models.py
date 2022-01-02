@@ -32,7 +32,7 @@ class Products_Comments ( CommonInfo ,models.Model ) :
     # date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f"{self.customer} {self.products}"
+        return f"{self.customer} {self.products} - {self.title}"
 
 class Products_Comment_likes ( CommonInfo ,models.Model ) :
     comments = models.ForeignKey(Products_Comments, on_delete=models.CASCADE)

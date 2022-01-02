@@ -1,0 +1,17 @@
+{% extends "class_base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-md-12 my-3">
+            <form action="" method="post">
+                {% csrf_token %}
+                <p>motmaen hastid ke mikhahid poste <span style="color: red;">{{object}}</span> ro delet konid ?</p>
+                <input type="submit" , value="bezan berim daa!">
+                <br>
+                <a href="{% url 'shop-dashboard' %}">bargasht be safhe Shop-dashboard</a>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
+
+{% comment %} {% url 'delete-post' post_id=post.id  %} {% endcomment %}

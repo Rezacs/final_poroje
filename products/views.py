@@ -32,8 +32,6 @@ def products_list_2(request):
     serializer = ProductsListSerializer(products , many=True)
 
     return Response(data = serializer.data , status=200)
-
-
 @api_view(['GET'])
 def products_detail_2(request , input_id):
 
@@ -42,9 +40,6 @@ def products_detail_2(request , input_id):
     serializer = PostSerializer(products)
 
     return Response(data = serializer.data , status=200)
-
-
-#
 @api_view(['GET'])
 def products_likes(request , input_id):
 
@@ -54,8 +49,6 @@ def products_likes(request , input_id):
     serializer = ProductsLikeSerializer(product_like)
 
     return Response(data = serializer.data , status=200)
-#
-
 @api_view(['GET'])
 def post_comments_list_2(request):
 
@@ -64,7 +57,6 @@ def post_comments_list_2(request):
     serializer = PostCommentListSerializer(comments , many = True)
 
     return Response(data = serializer.data , status=200)
-
 @api_view(['GET'])
 def post_comments_detail_2(request , comment_id):
 
@@ -75,6 +67,7 @@ def post_comments_detail_2(request , comment_id):
     return Response(data = serializer.data , status=200)
 
 #FINAL_PROJECT
+
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -105,7 +98,7 @@ class ShopDashboard (ListView):
         context = super(ShopDashboard, self).get_context_data(**kwargs)
         user = self.request.user
         shops = Shop.not_deleted.filter(owner = user)
-        customer = Customer.objects.get(user_name=user.username)
+        customer = Customer.objects.get(mobile=user.mobile)
         followers = UserConnections.objects.filter(follower=user)
         followings = UserConnections.objects.filter(following=user)
         context.update({
@@ -115,7 +108,6 @@ class ShopDashboard (ListView):
             'followings':followings,
         })
         return context
-
 @login_required(login_url='login-mk')
 def shop_dashboard ( request ) :
     user = request.user
@@ -146,7 +138,6 @@ class AddShop(CreateView):
         self.object.save()
         return redirect(reverse('shop-dashboard'))
 
-@login_required(login_url='login-mk')
 def add_Shop ( request ) :
     form = AddShopForm(request.POST or None )
     if request.method == "POST" :
@@ -175,7 +166,6 @@ class DeleteShop(DeleteView):
         else :
             return HttpResponse('you dont have permission to do this !')
 
-@login_required(login_url='login-mk')
 def delete_shop(request,id):
     shop = get_object_or_404(Shop ,id=id)
     if request.user == shop.owner :    
@@ -205,7 +195,6 @@ class EditShop(UpdateView):
     def get_success_url(self):
         return reverse('Shop_Page', kwargs={'pk': self.get_object().id})
 
-@login_required(login_url='login-mk')
 def edit_shop ( request , id ) :
     specified_shop = get_object_or_404(Shop , id =id )
     form = AddShopForm(instance=specified_shop)
@@ -223,13 +212,14 @@ def edit_shop ( request , id ) :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_shop.html',{'form' : form , 'specified_post' : specified_shop})
 
-
-class AddProduct(CreateView):
-
+class AddProduct(View):
     def get(self, request, *args, **kwargs):
         self.object = None
         form = AddProductForm(None or self.request.POST , self.request.FILES)
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
+        if not shop : 
+            messages.add_message(request, messages.WARNING , 'your shop is not verified !')
+            return redirect(f"/onlineshop/view_shop/{self.kwargs['ids'] }")
         return render (request , 'set_shop/new_product.html' , {'form' : form , 'shop' : shop})
 
     def post(self, request, *args, **kwargs):
@@ -241,7 +231,6 @@ class AddProduct(CreateView):
         bad_product.save()
         messages.add_message(request, messages.INFO , 'new product was saved !')
         return redirect(f'/onlineshop/view_shop/{shop[0].id }')
-
 
 class ShopView (DetailView):
     model = Shop
@@ -256,7 +245,6 @@ class ShopView (DetailView):
         })
         return context
 
-@login_required(login_url='login-mk')
 def add_product (request , ids ) :
     form = AddProductForm(None or request.POST , request.FILES)
     shop = Shop.accepted.filter(id = ids )
@@ -274,13 +262,12 @@ def add_product (request , ids ) :
 
     return render (request , 'set_shop/new_product.html' , {'form' : form , 'shop' : shop})
 
-
 def class_product_detail ( request , id ) : 
     product = Products.objects.get(id = id)
     user = request.user
     likes = Products_Likes.objects.filter(products__id = id )
     if user.is_authenticated :
-        customer = Customer.objects.get(user_name =user.username)
+        customer = Customer.objects.get(mobile =user.mobile)
         check_like_product = Products_Likes.objects.filter(products = product).filter(writer = user)
         check_like_comment = Products_Comment_likes.objects.filter(comments__products = product).filter(writer = user)
     else :
@@ -328,9 +315,21 @@ def class_product_detail ( request , id ) :
         'form3' : form3
     })
 
-def delete_product_comment(request,comment_id):
+class DeleteProductComment(DeleteView):
+    model = Products_Comments
+    template_name = 'set_shop/delete_comment.html'
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(DeleteProductComment, self).get_object()
+        if not obj.writer == self.request.user:
+            return HttpResponse('you dont have permission to do this !')
+        return obj
+    def get_success_url(self):
+        return reverse('Detail_product', kwargs={'id': self.get_object().products.id})
+
+def delete_product_comment(request,pk):
     
-    comment = get_object_or_404(Products_Comments,id=comment_id)
+    comment = get_object_or_404(Products_Comments,id=pk)
     if request.user == comment.writer :    
         comment.delete()
         product = comment.products
@@ -353,7 +352,6 @@ class EditProduct(UpdateView):
         messages.add_message(request, messages.SUCCESS, 'product was edited !')
         return redirect(f'/onlineshop/view_shop/{shop[0].id }')
     
-@login_required(login_url='login-mk')
 def edit_product ( request , id ) :
     specified_product = get_object_or_404(Products , id =id )
     form = AddProductForm(instance=specified_product)
@@ -369,7 +367,6 @@ def edit_product ( request , id ) :
         else :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_product.html',{'form' : form , 'specified_post' : specified_product})
-
 
 def edit_comment ( request , id ) :
     comment = get_object_or_404(Products_Comments , id =id )
@@ -388,8 +385,6 @@ def edit_comment ( request , id ) :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_comment.html',{'form' : form , 'comment' : comment , 'product' : product})
 
-
-@login_required(login_url='login-mk')
 def add_product_comment ( request , comment_id ) :
     comment = get_object_or_404(Products_Comments , id =comment_id )
     product = comment.products
@@ -410,7 +405,6 @@ def add_product_comment ( request , comment_id ) :
 
     return render ( request , 'set_shop/add_comment.html' , {'form' : form , 'post' : product} )
 
-
 def user_shop_page_view ( request , username ) :
     pointed_user = User.objects.get(username = username)
     shops = Shop.accepted.filter(owner = pointed_user)
@@ -426,7 +420,6 @@ def user_shop_page_view ( request , username ) :
         'followings':followings,
     })
 
-@login_required(login_url='login-mk')
 def add_to_basket (request , id ) :
     product = Products.objects.get ( id = id )
     if product.quantity < 1 or product.shop.status != 'chek' :
@@ -448,25 +441,21 @@ def add_to_basket (request , id ) :
     messages.add_message(request, messages.SUCCESS , 'product added to basket !')
     return redirect(f'/onlineshop/product_detail/{product.id}')
 
-
 class SeeBasket(View):
-
-    def get(self, request, *args, **kwargs):
-        self.object = None
-        form = AddProductForm(None or self.request.POST , self.request.FILES)
-        shop = Shop.accepted.filter(id = self.kwargs['ids'] )
-        return render (request , 'set_shop/new_product.html' , {'form' : form , 'shop' : shop})
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        form = AddProductForm(None or self.request.POST , self.request.FILES)
-        shop = Shop.accepted.filter(id = self.kwargs['ids'] )
-        bad_product = form.save(commit=False)
-        bad_product.shop = shop[0]  #request.user
-        bad_product.save()
-        messages.add_message(request, messages.INFO , 'new product was saved !')
-        return redirect(f'/onlineshop/view_shop/{shop[0].id }')
-
+    model = Shop
+    template_name = 'set_shop/new_product.html'
+    form_class = AddShopForm
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(AddProduct, self).get_object()
+        if not obj.owner == self.request.user:
+            return HttpResponse('you dont have permission to do this !')
+        if not obj.status == 'chek' :
+            messages.add_message(self.request, messages.WARNING , 'your shop is not verified !')
+            return redirect(f'/onlineshop/view_shop/{self.get_object().shop.id }')
+        return obj
+    def get_success_url(self):
+        return reverse('Detail_product', kwargs={'id': self.get_object().products.id})
 
 class ShopView (DetailView):
     model = Shop
