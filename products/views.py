@@ -513,7 +513,7 @@ def basket ( request ) :
         'live' : live,
         'live_items' : live_items
     })
-
+@login_required(login_url='login-mk')
 def edit_basket ( request , pk ) :
     basket = get_object_or_404(Basket , id =pk )
     form = BasketAddressForm(instance=basket)
@@ -527,7 +527,7 @@ def edit_basket ( request , pk ) :
         else :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_comment.html',{'form' : form  , 'basket' : basket})
-
+@login_required(login_url='login-mk')
 def delete_product_from_basket(request,pk):
     
     product = get_object_or_404(Products,id=pk)
@@ -536,7 +536,7 @@ def delete_product_from_basket(request,pk):
     qry.delete()
     messages.add_message(request, messages.SUCCESS, 'product was removed from basket !')
     return redirect('/onlineshop/basket')
-
+@login_required(login_url='login-mk')
 def checkout_basket ( request , pk ) :
     basket = get_object_or_404(Basket,id=pk)
     basket.status = 'past'
@@ -545,3 +545,10 @@ def checkout_basket ( request , pk ) :
     for p in products :
         p.product.quantity -= p.quantity
     return redirect('/onlineshop/basket')
+
+@login_required(login_url='login-mk')
+def shop_statistics ( request , pk ) :
+    shop = get_object_or_404(Shop,id=pk)
+    if request.user != shop.owner :
+        return HttpResponse('you dont have permission to do this !')
+    sells = BasketItem.objects.filter(status = 'load')
