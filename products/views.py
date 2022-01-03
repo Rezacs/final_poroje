@@ -207,17 +207,18 @@ def edit_shop ( request , id ) :
 class AddProduct(View):
     def get(self, request, *args, **kwargs):
         self.object = None
-        form = AddProductForm(None or self.request.POST , self.request.FILES)
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
+        print('gggggggggggggggggggggg' , shop , '  -  ' , shop.first().id )
         if not shop : 
             messages.add_message(request, messages.WARNING , 'your shop is not verified !')
             return redirect(f"/onlineshop/view_shop/{self.kwargs['ids'] }")
+        form = AddProductForm(None or self.request.POST , self.request.FILES , shop.first().id)
         return render (request , 'set_shop/new_product.html' , {'form' : form , 'shop' : shop})
 
     def post(self, request, *args, **kwargs):
         self.object = None
-        form = AddProductForm(None or self.request.POST , self.request.FILES)
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
+        form = AddProductForm(None or self.request.POST , self.request.FILES ,  shop.first().id)
         bad_product = form.save(commit=False)
         bad_product.shop = shop[0]  #request.user
         bad_product.save()
