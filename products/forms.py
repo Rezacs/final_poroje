@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import fields
-from basket.models import Basket
+from basket.models import Basket, BasketItem
 from grups.models import *
 from post.models import *
 from commentandlike.models import *
@@ -185,3 +185,8 @@ class BasketAddressForm(forms.ModelForm):
         super(BasketAddressForm, self).__init__(*args, **kwargs)
         if self.instance:
             self.fields['address'].queryset = Address.objects.filter(owner=self.instance.owner)
+
+class SelledItemsForm ( forms.ModelForm ) :
+    class Meta :
+        model = BasketItem
+        fields = ['status']

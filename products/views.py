@@ -551,4 +551,56 @@ def shop_statistics ( request , pk ) :
     shop = get_object_or_404(Shop,id=pk)
     if request.user != shop.owner :
         return HttpResponse('you dont have permission to do this !')
-    sells = BasketItem.objects.filter(status = 'load')
+    sells = BasketItem.objects.filter( product__shop = shop).order_by('-added_date')
+    products = Products.objects.filter(shop = shop)
+    user = request.user
+    likes = Products_Likes.objects.filter(products__in=products)
+    form = SelledItemsForm(request.POST, prefix="sells")
+    # form2 = LikeProductForm()
+    # form3 = LikeProductCommentForm()
+    if request.method == "POST" :
+        if 'form' in request.POST :
+            form = SelledItemsForm(request.POST) # validate
+            if form.is_valid() :
+                print(form.cleaned_data)
+                comment = form.save(commit=False)
+                comment.save()
+                messages.add_message(request, messages.SUCCESS, 'changes submited !')
+
+    #     if 'form2' in request.POST :
+    #         form2 = LikeProductForm(request.POST)
+    #         if form2.is_valid() :
+    #             if check_like_product :
+    #                 check_like_product.delete()
+    #             else :
+    #                 like = form2.save(commit=False)
+    #                 like.writer = user
+    #                 like.products = product
+    #                 like.save()
+
+        return redirect(f'/onlineshop/shop_statistics/{shop.id}')
+
+    return render(request , 'set_shop/statistics.html', {
+        'post' :shop,
+        'sells' : sells,
+        'products' : products ,
+        'form' : form,
+        'user' : user ,
+        'likes' : likes ,
+    })
+
+
+def edit_baskeitem_status ( request , pk ) :
+    item = get_object_or_404(BasketItem , id=pk )
+    buyer = item.basket.owner
+    form = SelledItemsForm(instance=item)
+    if request.method == "POST" :
+        if request.user == item.product.shop.owner : 
+            form = SelledItemsForm(request.POST , instance=item)
+            if form.is_valid() :
+                form.save()
+                messages.add_message(request, messages.SUCCESS , 'status changed !')
+                return redirect(f'/onlineshop/shop_statistics/{item.product.shop.id}')
+        else :
+            return HttpResponse('you dont have permission to do this !')
+    return render ( request , 'set_shop/edit_basket_item_status.html',{'form' : form , 'buyer' : buyer})

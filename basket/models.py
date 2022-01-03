@@ -98,7 +98,7 @@ class BasketItem ( models.Model ) :
         return f"{self.product} factor {self.added_date}"
 
     def save(self , *args , **kwargs) :
-        self.basket.price += ( self.quantity * self.product.price)
+        self.basket.price = str( self.quantity * self.product.price)
         super(BasketItem,self).save(*args , **kwargs)
 
 class Order ( models.Model ) :

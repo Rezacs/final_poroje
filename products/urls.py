@@ -25,4 +25,6 @@ urlpatterns = [
     path('edit_basket/<int:pk>', edit_basket , name='Edit-Basket'),
     path('delete_from_basket/<int:pk>', delete_product_from_basket , name='Delete-From-Basket'),
     path('pay_baset/<int:pk>', checkout_basket , name='Pay-Basket'),
+    path('shop_statistics/<int:pk>', shop_statistics , name='Statistics'),
+    path('edit_item_status/<int:pk>', edit_baskeitem_status , name='Edit-Item-Status'),
 ]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)
