@@ -196,3 +196,8 @@ class SelledItemsForm ( forms.ModelForm ) :
     class Meta :
         model = BasketItem
         fields = ['status']
+
+class EditBasketItemForm ( forms.ModelForm ) :
+    class Meta :
+        model = BasketItem
+        fields = ['quantity']

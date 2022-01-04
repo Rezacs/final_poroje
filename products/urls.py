@@ -27,4 +27,5 @@ urlpatterns = [
     path('pay_baset/<int:pk>', checkout_basket , name='Pay-Basket'),
     path('shop_statistics/<int:pk>', shop_statistics , name='Statistics'),
     path('edit_item_status/<int:pk>', edit_baskeitem_status , name='Edit-Item-Status'),
+    path('edit_basket_item_quantity/<int:pk>', edit_basket_item_quantity , name='Edit-Basket-Item-Quantity'),
 ]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)

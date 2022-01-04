@@ -27,6 +27,12 @@
                                 <a class="btn btn-sm btn-danger" href="{% url 'Delete-From-Basket' pk=item.product.id %}">
                                     <small>Remove from basket</small>
                                 </a>
+                                <br>
+                                <a class="btn btn-sm btn-danger" href="{% url 'Edit-Basket-Item-Quantity' pk=item.id %}">
+                                    <small>Edit Quantity</small>
+                                </a>
+                                <br>
+                                each one of this item costs : {{item.product.price}}
                             </p>
                             {% endif %}
                         {% endfor %}

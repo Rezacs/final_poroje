@@ -67,8 +67,8 @@
         <div class="row mt-1 g-3 btn-light " style="height: 100%;">
             <p style="justify-content: center;" >live bought products :</p>
             {% for sell in sells %}
-                <div class="col-md-3 " style="height: auto; ">
-                    {% if sell.status == 'load' %}
+                {% if sell.status == 'load' %}
+                    <div class="col-md-3 " style="height: auto; ">
                         <div class="card h-100" style="border: solid rgb(18, 238, 73);">
                             <div style="justify-content: center;"> 
                                 {% if sell.product.image %}
@@ -107,8 +107,8 @@
                                 <small>Edit status</small>
                             </a>
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
@@ -117,8 +117,8 @@
         <div class="row mt-1 g-3 btn-light " style="height: 100%;">
             <p style="justify-content: center;" >NOTlive bought products :</p>
             {% for sell in sells %}
-                <div class="col-md-3 " style="height: auto; ">
-                    {% if sell.status != 'load' %}
+                {% if sell.status != 'load' %}
+                    <div class="col-md-3 " style="height: auto; ">
                         <div class="card h-100" style="border: solid rgb(157, 194, 194);">
                             <div style="justify-content: center;"> 
                                 {% if sell.product.image %}
@@ -143,8 +143,8 @@
                                 <small>Edit status</small>
                             </a>
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>

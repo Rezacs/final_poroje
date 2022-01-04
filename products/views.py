@@ -501,9 +501,16 @@ def shop_owner_view ( request , id) :
 def basket ( request ) :
     user = request.user
     baskets = Basket.objects.filter(owner = user)
-    live = Basket.objects.filter(status = 'live')
+    #live = Basket.objects.filter(status = 'live')
     items = BasketItem.objects.filter(basket__in=baskets)
     live_items = items.filter(basket__status='live')
+    for basket in baskets :
+        if basket.status == 'live' :
+            basket.price = 0
+            for item in items :
+                if item.basket == basket :
+                    basket.price += ( item.product.price * item.quantity )
+            basket.save()
 
     customer = Customer.objects.get(user_name=user.username)
     return render ( request , 'baskets.html' , {
@@ -511,9 +518,9 @@ def basket ( request ) :
         'user' : user,
         'customer':customer,
         'items' : items,
-        'live' : live,
         'live_items' : live_items
     })
+
 @login_required(login_url='login-mk')
 def edit_basket ( request , pk ) :
     basket = get_object_or_404(Basket , id =pk )
@@ -528,6 +535,8 @@ def edit_basket ( request , pk ) :
         else :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_comment.html',{'form' : form  , 'basket' : basket})
+
+
 @login_required(login_url='login-mk')
 def delete_product_from_basket(request,pk):
     
@@ -537,14 +546,22 @@ def delete_product_from_basket(request,pk):
     qry.delete()
     messages.add_message(request, messages.SUCCESS, 'product was removed from basket !')
     return redirect('/onlineshop/basket')
+
 @login_required(login_url='login-mk')
 def checkout_basket ( request , pk ) :
+
     basket = get_object_or_404(Basket,id=pk)
-    basket.status = 'past'
-    messages.add_message(request, messages.SUCCESS, 'basket payed !')
+
+    print('staaaaatuuuus' , basket.status)
     products = BasketItem.objects.filter(basket = basket)
-    for p in products :
-        p.product.quantity -= p.quantity
+    for product in products :
+        product.status = 'load' 
+        product.product.quantity -= 1
+        product.save()
+
+    basket.status = 'past'
+    basket.save()
+    messages.add_message(request, messages.SUCCESS, 'basket payed !')
     return redirect('/onlineshop/basket')
 
 @login_required(login_url='login-mk')
@@ -590,7 +607,6 @@ def shop_statistics ( request , pk ) :
         'likes' : likes ,
     })
 
-
 def edit_baskeitem_status ( request , pk ) :
     item = get_object_or_404(BasketItem , id=pk )
     buyer = item.basket.owner
@@ -605,3 +621,18 @@ def edit_baskeitem_status ( request , pk ) :
         else :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_basket_item_status.html',{'form' : form , 'buyer' : buyer})
+
+@login_required(login_url='login-mk')
+def edit_basket_item_quantity ( request , pk ) :
+    item = get_object_or_404(BasketItem , id =pk )
+    form = EditBasketItemForm(instance=item)
+    if request.method == "POST" :
+        if request.user == item.basket.owner : 
+            form = EditBasketItemForm(request.POST , instance=item)
+            if form.is_valid() :
+                form.save()
+                messages.add_message(request, messages.SUCCESS , 'quantity changes submited !')
+                return redirect('/onlineshop/basket')
+        else :
+            return HttpResponse('you dont have permission to do this !')
+    return render ( request , 'set_shop/edit_comment.html',{'form' : form  , 'basket' : basket})
