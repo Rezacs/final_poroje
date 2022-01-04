@@ -36,7 +36,7 @@ class Shop ( models.Model ) :
     image = models.ImageField(upload_to='uploads',null=True,blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     # category = models.ForeignKey(Category, on_delete=models.CASCADE ,blank=True , null=True)
-    category = models.ManyToManyField(Category  )
+    category = models.ManyToManyField(Category,blank=True , null=True  )
     Address = models.TextField( blank=True , null=True)
     contact_number = models.TextField( blank=True , null=True)
     # created_at
@@ -58,7 +58,7 @@ class Shop ( models.Model ) :
         #self.request
         #self.owner = self.request.user
         #ShopAdmin.save_model()
-        self.status = 'load'
+        #self.status = 'load'
         if self.slug == None :
             if Shop.objects.filter(name = self.name).exists() :
                 extra = str(randint(1,1000))
@@ -100,7 +100,7 @@ class Products ( models.Model ) :
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE , blank=True , null=True)
     image = models.ImageField(upload_to='uploads',null=True,blank=True)
     tag = models.ManyToManyField(Tag )
-    category = models.ManyToManyField(Category  )
+    category = models.ManyToManyField(Category )
     price = models.PositiveIntegerField( blank=True, null=True)
     created_on = models.DateTimeField( auto_now_add=True ,null=True,blank=True )
 

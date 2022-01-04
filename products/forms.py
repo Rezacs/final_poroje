@@ -148,12 +148,13 @@ class AddProductForm (forms.ModelForm) :
     class Meta :
         model = Products
         exclude = ['shop']
-    # def __init__(self , jj=None , *args, **kwargs):
-    #     super(AddProductForm, self).__init__(*args, **kwargs)
-    #     if self.instance:
-    #         print( 'jjjjjjjjjjjjjjjjjjjjjjjj' , jj) #self.kwargs['ids']
-    #         mentioned_shop = Shop.objects.get(id = jj)
-    #         self.fields['category'].queryset = Category.objects.filter(parent=mentioned_shop.category)
+    def __init__(self , shop_id=None , *args, **kwargs):
+        super(AddProductForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            if shop_id : 
+                print( 'jjjjjjjjjjjjjjjjjjjjjjjj' , shop_id) #self.kwargs['ids']
+                mentioned_shop = Shop.objects.get(id = shop_id)
+                self.fields['category'].queryset = Category.objects.filter(parent__in=mentioned_shop.category.all())
 
 class ProductCommentModelForm ( forms.ModelForm ) :
     class Meta :

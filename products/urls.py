@@ -9,6 +9,7 @@ from products.views import *
 
 urlpatterns = [
     path('dashboard', login_required(ShopDashboard.as_view() , login_url='login-mk') , name='shop-dashboard'),
+    path('useless_shops', login_required(UseLessShopDashboard.as_view() , login_url='login-mk') , name='Useless-Shops'),
     path('add_shop', login_required(AddShop.as_view() , login_url='login-mk') , name='Add_shop'),
     path('delete_shop/<int:pk>', login_required(DeleteShop.as_view() , login_url='login-mk') , name='Delete_shop'),
     path('view_shop/<int:pk>', login_required(ShopView.as_view() , login_url='login-mk') , name='Shop_Page'),
@@ -28,4 +29,5 @@ urlpatterns = [
     path('shop_statistics/<int:pk>', shop_statistics , name='Statistics'),
     path('edit_item_status/<int:pk>', edit_baskeitem_status , name='Edit-Item-Status'),
     path('edit_basket_item_quantity/<int:pk>', edit_basket_item_quantity , name='Edit-Basket-Item-Quantity'),
+    path('restore_shop/<int:pk>', restore_shop , name='Restore-Shop'),
 ]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)

@@ -73,6 +73,8 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView,ListView,DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+
 
 
 #@permission_classes([IsAuthenticated])
@@ -84,7 +86,7 @@ class ShopDashboard (ListView):
     template_name = 'set_shop/dashboard.html'
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(owner = self.request.user)
+        return queryset.filter(owner = self.request.user).filter( Q(status='chek') | Q(status='load'))
     def get_context_data(self, **kwargs):
         context = super(ShopDashboard, self).get_context_data(**kwargs)
         user = self.request.user
@@ -115,6 +117,29 @@ def shop_dashboard ( request ) :
         'followings':followings,
     })
 
+
+class UseLessShopDashboard (ListView):
+    model = Shop
+    context_object_name = 'shops'
+    template_name = 'set_shop/useless_shops.html'
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(owner = self.request.user).filter(Q(status='rejc') | Q(status='dele'))
+    def get_context_data(self, **kwargs):
+        context = super(UseLessShopDashboard, self).get_context_data(**kwargs)
+        user = self.request.user
+        shops = Shop.not_deleted.filter(owner = user)
+        customer = Customer.objects.get(mobile=user.mobile)
+        followers = UserConnections.objects.filter(follower=user)
+        followings = UserConnections.objects.filter(following=user)
+        context.update({
+            'user' : user,
+            'customer':customer,
+            'followers':followers,
+            'followings':followings,
+        })
+        return context
+
 class AddShop(CreateView):
     model = Shop
     #fields = ['name']
@@ -128,6 +153,7 @@ class AddShop(CreateView):
         self.object.owner = self.request.user
         self.object.customer= Customer.objects.get(mobile = self.request.user.mobile)
         self.object.save()
+        messages.add_message(self.request, messages.SUCCESS, 'shop was created !')
         return redirect(reverse('shop-dashboard'))
 
 def add_Shop ( request ) :
@@ -148,6 +174,15 @@ def add_Shop ( request ) :
 
 class DeleteShop(DeleteView):
     model = Shop
+
+    template_name = 'set_shop/delete_shop.html'
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(DeleteShop, self).get_object()
+        if not obj.owner == self.request.user:
+            return HttpResponse('you dont have permission to do this !')
+        return obj
+
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.user == self.object.owner :    
@@ -157,6 +192,9 @@ class DeleteShop(DeleteView):
             return redirect('/onlineshop/dashboard')
         else :
             return HttpResponse('you dont have permission to do this !')
+
+    def get_success_url(self):
+        return reverse('/onlineshop/dashboard')
 
 def delete_shop(request,id):
     shop = get_object_or_404(Shop ,id=id)
@@ -209,16 +247,17 @@ class AddProduct(View):
         self.object = None
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
         print('gggggggggggggggggggggg' , shop , '  -  ' , shop.first().id )
-        if not shop : 
+        print('ggggggg2222222' , shop , '  -  ' , self.request.GET )
+        if not shop :
             messages.add_message(request, messages.WARNING , 'your shop is not verified !')
             return redirect(f"/onlineshop/view_shop/{self.kwargs['ids'] }")
-        form = AddProductForm(None or self.request.POST , self.request.FILES , shop.first().id)
+        form = AddProductForm(shop_id = shop.first().id)
         return render (request , 'set_shop/new_product.html' , {'form' : form , 'shop' : shop})
 
     def post(self, request, *args, **kwargs):
         self.object = None
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
-        form = AddProductForm(None or self.request.POST , self.request.FILES ,  shop.first().id)
+        form = AddProductForm(None , None or self.request.POST , self.request.FILES)
         bad_product = form.save(commit=False)
         bad_product.shop = shop[0]  #request.user
         bad_product.save()
@@ -569,7 +608,10 @@ def shop_statistics ( request , pk ) :
     shop = get_object_or_404(Shop,id=pk)
     if request.user != shop.owner :
         return HttpResponse('you dont have permission to do this !')
-    sells = BasketItem.objects.filter( product__shop = shop).order_by('-added_date')
+    sells = BasketItem.objects.filter(product__shop = shop).filter(
+        Q(status = 'done') |
+        Q(status = 'load') |
+        Q(status = 'canc') ).order_by('-added_date')
     products = Products.objects.filter(shop = shop)
     user = request.user
     likes = Products_Likes.objects.filter(products__in=products)
@@ -636,3 +678,14 @@ def edit_basket_item_quantity ( request , pk ) :
         else :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_comment.html',{'form' : form  , 'basket' : basket})
+
+@login_required(login_url='login-mk')
+def restore_shop(request,pk):
+    shop = get_object_or_404(Shop ,id=pk)
+    if request.user == shop.owner :    
+        shop.status = 'load'
+        shop.save()
+        messages.add_message(request, messages.SUCCESS, 'shop was restored !')
+        return redirect('/onlineshop/dashboard')
+    else :
+        return HttpResponse('you dont have permission to do this !')
