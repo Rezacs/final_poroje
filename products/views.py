@@ -257,9 +257,6 @@ def edit_shop ( request , id ) :
     return render ( request , 'set_shop/edit_shop.html',{'form' : form , 'specified_post' : specified_shop})
 
 class AddProduct(View):
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-        self.shop = Shop.accepted.filter(id = self.kwargs['ids'] )
 
     def get(self, request, *args, **kwargs):
         #self
