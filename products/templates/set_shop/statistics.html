@@ -20,47 +20,50 @@
                 <p>shortdesc : {{post.shortdesc}}</p>
                 <small>{{post.created_on}}</small>
                 <br>
-                {% if likes %}
-                liked by <span style="border: solid blue;">{{likes.count}} </span>  user :
-                    {% for like in likes %}
-                    {{like.writer}}-
-                    {% endfor %}
-                {% else %}
-                    No likes.
-                {% endif %}
-                {% comment %} {% for like in likes %}
-                    {{like.writer}}-
-                {% endfor %} {% endcomment %}
-                <br>
                 <h1> slug : {{post.slug}}</h1>
             </div>
         </div>
     </div>
 
     <hr>
-    <h5>status : {{post.status}}</h5>
-    <hr>
+    <div class="col-md-12">
+        <div class="row" style="height: 100%;">
+            <div class="col-md-4">
+                <small>tags :</small>
+                {% for t in post.tag.all  %}
+                    <p>{{t}}</p>
+                {% endfor %}
+            </div>
 
-    <hr>
-    <small>tags :</small>
-    {% for t in post.tag.all  %}
-        <p>{{t}}</p>
-    {% endfor %}
-    <hr>
+            <div class="col-md-4">
+                categorys :
+                {% for t in post.category.all  %}
+                    <a href="/class_category_detail/{{t.id}}">{{t}}</a>-
+                {% endfor %}
+            </div>
 
-    <hr>
-    categorys :
-    {% for t in post.category.all  %}
-        <a href="/class_category_detail/{{t.id}}">{{t}}</a>-
-    {% endfor %}
-    <hr>   
-    admin comment : {{post.admin_description}}
-    <hr>
-    <div class="container">
-        <div class="col-md-12 my-3">
+            <div class="col-md-4">
+                <h5>status : {{post.status}}</h5>
+            </div>
         </div>
     </div>
     <hr>
+    
+    <p>
+        <h1>
+            Total sells = {{sells.count}}
+        </h1>
+    </p>
+    
+
+    {% if post.admin_description %}
+        <hr>   
+        {% if request.user == post.owner %}
+            admin comment : {{post.admin_description}}
+        {% endif %}
+        <hr>
+    {% endif %}
+
     sells :
 
     <div class="col-md-12 ">
@@ -187,36 +190,5 @@
                 {% endfor %}
             </div>
         </div>
-        <p>
-            {% if request.user == post.owner %}
-                <a class="btn btn-sm btn-primary" href="/onlineshop/add_product/{{post.id}}">
-                    <small>Add product to your shop</small>
-                </a>
-            {% endif %}
-        </p>
-    <h1> 
-        comments : count = {{comments.count}} 
-    </h1>
-    <hr>
-    {% for comment in comments %}
-        <h1 style="color: brown;">customer :{{comment.customer}}</h1>
-        <a href="/user/{{comment.writer}}">his page</a>
-        <h1 style="color: brown;">user :{{comment.writer}}</h1>
-        <h2 style="color: rgb(60, 202, 47);">title :{{comment.title}}</h2>
-        <h3>body : {{comment.body}}</h3>
-        <h6>{{comment.created_on}}</h6>
-
-        {% comment %} {% if comment.writer == request.user %}
-            <a class="btn btn-sm btn-danger" href="{% url 'delete-comment' comment_id=comment.id %}">
-                <small>حذف</small>
-            </a>
-            <a class="btn btn-sm btn-primary" href="{% url 'edit-comment' comment_id=comment.id %}">
-                <small>ویرایش</small>
-            </a>
-        {% else %}
-        {% endif %} {% endcomment %}
-
-        <hr>
-    {% endfor %}
 
 {% endblock content %}

@@ -647,7 +647,7 @@ def shop_statistics ( request , pk ) :
         Q(status = 'canc') ).order_by('-added_date')
     products = Products.objects.filter(shop = shop)
     user = request.user
-    likes = Products_Likes.objects.filter(products__in=products)
+    #likes = Products_Likes.objects.filter(products__in=products)
     form = SelledItemsForm(request.POST, prefix="sells")
     # form2 = LikeProductForm()
     # form3 = LikeProductCommentForm()
@@ -679,7 +679,6 @@ def shop_statistics ( request , pk ) :
         'products' : products ,
         'form' : form,
         'user' : user ,
-        'likes' : likes ,
     })
 
 def edit_baskeitem_status ( request , pk ) :
