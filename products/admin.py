@@ -87,5 +87,6 @@ class ProductAdmin(admin.ModelAdmin) :
 
 admin.site.register(Products , ProductAdmin)
 admin.site.register(Shop , ShopAdmin)
+admin.site.register(ProductImages)
 
 # Register your models here.

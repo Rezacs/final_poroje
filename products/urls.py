@@ -20,6 +20,7 @@ urlpatterns = [
     path('edit_product/<int:pk>', EditProduct.as_view() , name='Edit_product'),
     path('edit_product_comment/<int:pk>', login_required(EditProductComment.as_view() , login_url='login-mk') , name='Edit_product_comment'),
     path('Shop/<str:username>', login_required(UserShopsView.as_view() , login_url='login-mk') , name='Shop_Page'),
+    path('add_images/<int:pk>', login_required(FileFieldFormView.as_view() , login_url='login-mk') , name='Add-Product-Images'),
     path('add_product_comment/<int:comment_id>', add_product_comment , name='Product-comment-reply'),
     path('add_product_basket/<int:id>', add_to_basket , name='Add-Product-To-Basket'),
     path('basket', basket , name='Basket'),

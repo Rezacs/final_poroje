@@ -10,6 +10,9 @@
                 <a class="btn btn-sm btn-primary" href="/onlineshop/edit_product/{{product.id}}">
                     <small>Edit Product informations</small>
                 </a>
+                <a class="btn btn-sm btn-warning" href="/onlineshop/add_images/{{product.id}}">
+                    <small>Add more images</small>
+                </a>
             {% endif %}
         </p>
         <div class="row" style="height: 100%;">
@@ -42,23 +45,39 @@
         </div>
     </div>
 
+    {% if photos %}
+    <div class="col-md-12">
+        <div class="row" style="height: 100%;">
+            {% for photo in photos %}
+                <img class="responsive" src="{{photo.image.url}}" alt="image_of_post" style="width: 300px; height: 300px; border: solid red; margin-left: 10px;">
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <hr>
     <h5>body : {{product.body}}</h5>
     <hr>
 
     <hr>
-    <small>tags :</small>
-    {% for t in product.tag.all  %}
-        <p>{{t}}</p>
-    {% endfor %}
-    <hr>
 
+    <div class="col-md-12">
+        <div class="row" style="height: 100%;">
+            <div class="col-md-6">
+                <small>tags :</small>
+                {% for t in product.tag.all  %}
+                    <p>{{t}}</p>
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                categorys :
+                {% for t in product.category.all  %}
+                    <a href="/class_category_detail/{{t.id}}">{{t}}</a>-
+                {% endfor %}
+            </div>
+        </div>
+    </div>
     <hr>
-    categorys :
-    {% for t in product.category.all  %}
-        <a href="/class_category_detail/{{t.id}}">{{t}}</a>-
-
-    {% endfor %}
     <hr>
     <div class="container">
         <div class="col-md-12" >
@@ -175,5 +194,11 @@
 
         <hr>
     {% endfor %}
+
+    <style>
+        img {
+            border-radius: 30%;
+            }
+    </style>
 
 {% endblock content %}

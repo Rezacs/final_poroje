@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from post.serializers import *
 from products.forms import *
 from django.contrib import messages
-from django.http.response import HttpResponse, HttpResponseNotFound
+from django.http.response import Http404, HttpResponse, HttpResponseNotFound
 from basket.models import *
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -301,6 +301,7 @@ def class_product_detail ( request , id ) :
     product = Products.objects.get(id = id)
     user = request.user
     likes = Products_Likes.objects.filter(products__id = id )
+    photos = ProductImages.objects.filter(owner = product)
     if user.is_authenticated :
         customer = Customer.objects.get(mobile =user.mobile)
         check_like_product = Products_Likes.objects.filter(products = product).filter(writer = user)
@@ -347,7 +348,8 @@ def class_product_detail ( request , id ) :
         'form2' : form2 ,
         'check_like_post' : check_like_product ,
         'check_like_comment' : check_like_comment ,
-        'form3' : form3
+        'form3' : form3,
+        'photos' : photos
     })
 
 class DeleteProductComment(DeleteView):
@@ -381,11 +383,13 @@ class EditProduct(UpdateView):
     #form = AddProductForm()
     template_name = 'set_shop/edit_product.html'
     #success_url = f'/onlineshop/product_detail/{pk}'
-
-    def post(self, request, *args, **kwargs):
-        shop = Shop.accepted.filter(id = self.kwargs['pk'] )
-        messages.add_message(request, messages.SUCCESS, 'product was edited !')
-        return redirect(f'/onlineshop/view_shop/{shop[0].id }')
+    def dispatch(self, request, *args, **kwargs):
+        if request.user != self.get_object().shop.owner :
+            raise Http404
+        return super(EditProduct, self).dispatch(request , *args, **kwargs)
+        #return handler(request, *args, **kwargs)
+    def get_success_url(self):
+        return reverse('Detail_product', kwargs={'id': self.get_object().id})
     
 def edit_product ( request , id ) :
     specified_product = get_object_or_404(Products , id =id )
@@ -712,7 +716,40 @@ def restore_shop(request,pk):
     else :
         return HttpResponse('you dont have permission to do this !')
 
+from django.views.generic.edit import FormView
+from .forms import FileFieldForm
 
+class FileFieldFormView(FormView):
+    form_class = FileFieldForm
+    template_name = 'set_shop/multiple_upload.html'
+    #success_url = '...'  # Replace with your URL or reverse().
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        files = request.FILES.getlist('file_field')
+        product = Products.objects.filter(id = self.kwargs['pk'])
+        if self.request.user != product.shop.owner :
+            return HttpResponse('you dont have permission to do this !')
+        if form.is_valid():
+            for f in files:
+                ProductImages.objects.create(image = f , owner = product.first() )
+            #return self.form_valid(form)
+            return redirect(f"/onlineshop/product_detail/{ self.kwargs['pk']}")
+        else:
+            return self.form_invalid(form)
+
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        product = Products.objects.filter(id = self.kwargs['pk'])
+        if self.request.user != product.shop.owner :
+            return HttpResponse('you dont have permission to do this !')
+        if not product :
+            messages.add_message(request, messages.WARNING , 'no such product !')
+            return redirect(f"/onlineshop/product_detail/{product.shop.id }")
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        return render (request , 'set_shop/multiple_upload.html' , {'form' : form , 'product' : product})
 
 
 # force_authenticate(self.user)

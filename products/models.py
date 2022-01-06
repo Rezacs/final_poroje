@@ -137,3 +137,17 @@ class Products ( models.Model ) :
                 self.slug = self.slugg()
         super(Products,self).save(*args , **kwargs)
 
+
+class ProductImages ( models.Model ) :
+    STATUS_CHOICES = [ 
+        ('show' , 'show this image'),
+        ('dont' , 'dont show this image'),
+    ]
+    status = models.CharField(
+        max_length=4,
+        choices=STATUS_CHOICES , blank=True , null=True
+    )
+    owner = models.ForeignKey(Products , on_delete=models.PROTECT)
+    image = models.ImageField(upload_to='uploads',null=True,blank=True)
+    #category = models.ManyToManyField(Category,blank=True , null=True )
+    created_on = models.DateTimeField( auto_now_add=True)
