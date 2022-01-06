@@ -129,9 +129,9 @@
         <div class="row">
             <div class="col-md-12">
 
-                    <h6 style="color: brown;">
+                    {% comment %} <h6 style="color: brown;">
                         customer :{{comment.customer}}
-                    </h6>
+                    </h6> {% endcomment %}
                     {% if comment.parent %}
                         <p>
                             <small>
@@ -197,7 +197,7 @@
     <style>
         img {
             border-radius: 30%;
-            }
+        }
     </style>
 
 {% endblock content %}
