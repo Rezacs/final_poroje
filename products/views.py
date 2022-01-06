@@ -786,5 +786,14 @@ class FileFieldFormView(FormView):
         form = self.get_form(form_class)
         return render (request , 'set_shop/multiple_upload.html' , {'form' : form , 'product' : product})
 
+def product_liked_details (request , pk) :
+
+    postz = Products.objects.get(id=pk)
+    likes = Products_Likes.objects.filter(products=postz)
+                            
+    return render ( request , 'set_shop/product_like_detail.html' , {
+        'likes':likes,
+        'post' : postz
+    })
 
 # force_authenticate(self.user)
