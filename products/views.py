@@ -636,6 +636,34 @@ def checkout_basket ( request , pk ) :
     messages.add_message(request, messages.SUCCESS, 'basket payed !')
     return redirect('/onlineshop/basket')
 
+class ShopStatistics (DetailView):
+    model = Shop
+    context_object_name = 'post'
+    template_name = 'set_shop/statistics.html'
+
+    def get_object(self, queryset=None):
+        obj = super(ShopStatistics, self).get_object()
+        if not obj.owner == self.request.user:
+            return HttpResponse('you dont have permission to do this !')
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super(ShopStatistics, self).get_context_data(**kwargs)
+        user = self.request.user
+        sells = BasketItem.objects.filter(product__shop = self.get_object()).filter(
+            Q(status = 'done') |
+            Q(status = 'load') |
+            Q(status = 'canc') ).order_by('-added_date')
+        products = Products.objects.filter(shop = self.get_object())
+        form = SelledItemsForm(self.request.POST, prefix="sells")
+        context.update({
+        'sells' : sells,
+        'products' : products ,
+        'form' : form,
+        'user' : user ,
+        })
+        return context
+
 @login_required(login_url='login-mk')
 def shop_statistics ( request , pk ) :
     shop = get_object_or_404(Shop,id=pk)

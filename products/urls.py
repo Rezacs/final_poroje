@@ -27,7 +27,7 @@ urlpatterns = [
     path('edit_basket/<int:pk>', edit_basket , name='Edit-Basket'),
     path('delete_from_basket/<int:pk>', delete_product_from_basket , name='Delete-From-Basket'),
     path('pay_baset/<int:pk>', checkout_basket , name='Pay-Basket'),
-    path('shop_statistics/<int:pk>', shop_statistics , name='Statistics'),
+    path('shop_statistics/<int:pk>', login_required(ShopStatistics.as_view() , login_url='login-mk') , name='Statistics'),
     path('edit_item_status/<int:pk>', edit_baskeitem_status , name='Edit-Item-Status'),
     path('edit_basket_item_quantity/<int:pk>', edit_basket_item_quantity , name='Edit-Basket-Item-Quantity'),
     path('restore_shop/<int:pk>', restore_shop , name='Restore-Shop'),
