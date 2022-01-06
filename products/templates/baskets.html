@@ -124,6 +124,9 @@
                     <a class="btn btn-sm btn-warning" href="{% url 'Pay-Basket' pk=basket.id %}">
                         <small>-----</small>
                     </a>
+                    <a class="btn btn-sm btn-warning" href="{% url 'Pay-Basket' pk=basket.id %}">
+                        <small>{{basket.Chekedout_date}}</small>
+                    </a>
                 </div>
             {% endif %}
         </div>

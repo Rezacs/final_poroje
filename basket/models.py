@@ -63,6 +63,7 @@ class Basket ( models.Model ) :
     )
     address = models.ForeignKey( Address , on_delete=models.PROTECT , blank=True , null=True)
     price = models.PositiveIntegerField( blank=True, null=True)
+    Chekedout_date = models.DateTimeField(blank=True , null=True)
 
     def calculate ( obj ) :
         sum = 0

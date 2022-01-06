@@ -80,6 +80,15 @@ from django.db.models import Q
 #@permission_classes([IsAuthenticated])
 #from django.utils.decorators import method_decorator
 #@method_decorator(login_required, name='dispatch')
+
+class CheckOwner () :
+    def __init__(self , request , owner) -> None:
+        self.request = request
+        self.owner = owner
+    def check (self) :
+        if self.request.user == self.owner :
+            return True
+
 class ShopDashboard (ListView):
     model = Shop
     context_object_name = 'shops'
@@ -149,6 +158,10 @@ class AddShop(CreateView):
     template_name = 'set_shop/shop_form.html'
     success_url = '/dashboard'
     def form_valid(self, form):
+        q = Shop.objects.filter(owner = self.request.user).filter(status = 'load')
+        if q :
+            messages.add_message(self.request, messages.WARNING, 'you have a not verified shop ... wait !')
+            return redirect(reverse('shop-dashboard'))
         self.object = form.save(commit=False)
         self.object.owner = self.request.user
         self.object.customer= Customer.objects.get(mobile = self.request.user.mobile)
@@ -216,6 +229,7 @@ class EditShop(UpdateView):
     def update(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.user == self.object.owner :    
+            self.object.status = 'load'
             self.object.save()
             messages.add_message(request, messages.SUCCESS, 'shop was edited !')
             return redirect(f'/onlineshop/view_shop/{self.get_object().id }')
@@ -243,7 +257,12 @@ def edit_shop ( request , id ) :
     return render ( request , 'set_shop/edit_shop.html',{'form' : form , 'specified_post' : specified_shop})
 
 class AddProduct(View):
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.shop = Shop.accepted.filter(id = self.kwargs['ids'] )
+
     def get(self, request, *args, **kwargs):
+        #self
         self.object = None
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
         print('gggggggggggggggggggggg' , shop , '  -  ' , shop.first().id )
@@ -586,17 +605,22 @@ def delete_product_from_basket(request,pk):
     messages.add_message(request, messages.SUCCESS, 'product was removed from basket !')
     return redirect('/onlineshop/basket')
 
+import datetime
+
 @login_required(login_url='login-mk')
 def checkout_basket ( request , pk ) :
 
     basket = get_object_or_404(Basket,id=pk)
 
     print('staaaaatuuuus' , basket.status)
-    products = BasketItem.objects.filter(basket = basket)
-    for product in products :
-        product.status = 'load' 
-        product.product.quantity -= 1
-        product.save()
+    items = BasketItem.objects.filter(basket = basket)
+    basket.Chekedout_date = datetime.datetime.now()
+    basket.save()
+    for item in items :
+        item.status = 'load'
+        item.product.quantity -= item.quantity
+        item.product.save()
+        item.save()
 
     basket.status = 'past'
     basket.save()
@@ -681,6 +705,7 @@ def edit_basket_item_quantity ( request , pk ) :
 
 @login_required(login_url='login-mk')
 def restore_shop(request,pk):
+
     shop = get_object_or_404(Shop ,id=pk)
     if request.user == shop.owner :    
         shop.status = 'load'
@@ -689,3 +714,8 @@ def restore_shop(request,pk):
         return redirect('/onlineshop/dashboard')
     else :
         return HttpResponse('you dont have permission to do this !')
+
+
+
+
+# force_authenticate(self.user)
