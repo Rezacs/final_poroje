@@ -560,9 +560,17 @@ def shop_owner_view ( request , id) :
 def basket ( request ) :
     user = request.user
     baskets = Basket.objects.filter(owner = user)
-    #live = Basket.objects.filter(status = 'live')
+    live = baskets.filter(status = 'live')
+    live_products_count = 0
     items = BasketItem.objects.filter(basket__in=baskets)
     live_items = items.filter(basket__status='live')
+    if live :
+        for p in live_items :
+            live_products_count += (p.quantity)
+        print('llllllllllllllllllll',live_products_count)
+        print('jjjjjjjjjjjjjjjjj',live)
+        live[0].total_products_count = live_products_count
+        live[0].save()
     for basket in baskets :
         if basket.status == 'live' :
             basket.price = 0
