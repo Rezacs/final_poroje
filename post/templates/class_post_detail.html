@@ -39,22 +39,25 @@
     </div>
 
     <hr>
+    <div class="col-md-12">
+        <div class="row" style="height: 100%;">
+            <div class="col-md-6">
+                <small>tags :</small>
+                {% for t in post.tag.all  %}
+                    <p>{{t}}</p>
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                categorys :
+                {% for t in post.category.all  %}
+                    <a href="/class_category_detail/{{t.id}}">{{t}}</a>-
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <hr>
     <h5>body : {{post.body}}</h5>
-    <hr>
-
-    <hr>
-    <small>tags :</small>
-    {% for t in post.tag.all  %}
-        <p>{{t}}</p>
-    {% endfor %}
-    <hr>
-
-    <hr>
-    categorys :
-    {% for t in post.category.all  %}
-        <a href="/class_category_detail/{{t.id}}">{{t}}</a>-
-
-    {% endfor %}
     <hr>
     <div class="container">
         <div class="col-md-12 my-3">

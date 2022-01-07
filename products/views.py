@@ -811,16 +811,6 @@ def shop_owner_basket_detail ( request , shop_id ,  pk ) :
         Q(status = 'canc') ).filter(basket=basket)
     form = SelledItemsForm(request.POST, prefix="sells")
     customer = Customer.objects.get(mobile = basket.owner.mobile)
-    # if request.method == "POST" :
-    #     if 'form' in request.POST :
-    #         form = SelledItemsForm(request.POST) # validate
-    #         if form.is_valid() :
-    #             print(form.cleaned_data)
-    #             comment = form.save(commit=False)
-    #             comment.save()
-    #             messages.add_message(request, messages.SUCCESS, 'changes submited !')
-
-        #return redirect(f'/onlineshop/shop_statistics/{shop.id}')
 
     return render(request , 'set_shop/shop_owner_basket_detail.html', {
         'post' :shop,
@@ -829,5 +819,30 @@ def shop_owner_basket_detail ( request , shop_id ,  pk ) :
         'basket':basket,
         'customer':customer,
     })
+
+class DoneBasketItemsStatus (DetailView) :
+    model = Basket
+    context_object_name = 'basket'
+    template_name = 'set_shop/done_basket_detail.html'
+
+    def get_object(self, queryset=None):
+        obj = super(DoneBasketItemsStatus, self).get_object()
+        if not obj.owner == self.request.user:
+            return HttpResponse('you dont have permission to do this !')
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super(DoneBasketItemsStatus, self).get_context_data(**kwargs)
+        user = self.request.user
+        sells = BasketItem.objects.filter(
+            Q(status = 'done') |
+            Q(status = 'load') |
+            Q(status = 'canc') ).filter(basket = self.get_object())
+        context.update({
+        'sells' : sells,
+        'user' : user ,
+        })
+        return context
+
 
 # force_authenticate(self.user)

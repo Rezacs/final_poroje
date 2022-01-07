@@ -62,6 +62,9 @@
 
     <hr>
     {% if shops %}
+    <h1 style="margin-bottom: 60px; color: red;">
+        Your Shops ( {{shops.count}} ) :
+    </h1>
         {% for shop in shops %}
             <div class="row">
                 <div class="col-md-6">

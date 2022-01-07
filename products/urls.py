@@ -33,4 +33,5 @@ urlpatterns = [
     path('restore_shop/<int:pk>', restore_shop , name='Restore-Shop'),
     path('product_liked_detail/<int:pk>', product_liked_details , name='Product-Like-Detail'),
     path('view_basket/<int:shop_id>/<int:pk>', shop_owner_basket_detail , name='Detail-View-Basket'),
+    path('done_basket_detail/<int:pk>', login_required(DoneBasketItemsStatus.as_view() , login_url='login-mk') , name='Done-Basket-Detail'),
 ]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)

@@ -3,11 +3,6 @@
 {% load static %}
 
 {% block content %}
-    <div class="container">
-        <div class="col-md-12 my-3">
-        </div>
-    </div>
-    <hr>
 
     <h1> your baskets : </h1>
     <hr>
@@ -21,17 +16,18 @@
                             {% for item in items %}
                                 {% if item.basket == basket %}
                                 <p>
-                                    <a href="/onlineshop/product_detail/{{item.product.id}}">
-                                        {{item.product.name}}
-                                    </a>
-                                    --> {{item.quantity}} , maximum you can buy : {{item.product.quantity}}
-                                    <a class="btn btn-sm btn-danger" href="{% url 'Delete-From-Basket' pk=item.product.id %}">
-                                        <small>Remove from basket</small>
-                                    </a>
-                                    <br>
+                                    <p>
+                                        <a href="/onlineshop/product_detail/{{item.product.id}}">
+                                            {{item.product.name}}
+                                        </a>
+                                        --> {{item.quantity}} , maximum you can buy : {{item.product.quantity}}
+                                        <a class="btn btn-sm btn-danger" href="{% url 'Delete-From-Basket' pk=item.product.id %}">
+                                            <small>Remove from basket</small>
+                                        </a>
+                                    </p>
                                     each one of this item costs : {{item.product.price}}
-                                    <a class="btn btn-sm btn-danger" href="{% url 'Edit-Basket-Item-Quantity' pk=item.id %}">
-                                        <small>Edit Quantity</small>
+                                    <a class="btn btn-sm btn-warning" href="{% url 'Edit-Basket-Item-Quantity' pk=item.id %}">
+                                        <small>Edit Quantity - add desc</small>
                                     </a>
                                     <hr>
                                     
@@ -94,8 +90,8 @@
 
                     total price : {{basket.price}}
                     <br>
-                    <a class="btn btn-sm btn-primary" href="{% url 'Edit-Basket' pk=basket.id %}">
-                        <small>See seller comments</small>
+                    <a class="btn btn-sm btn-primary" href="{% url 'Done-Basket-Detail' pk=basket.id %}">
+                        <small>See sellers responses</small>
                     </a>
 
                     {% comment %} <a class="btn btn-sm btn-warning" href="{% url 'Pay-Basket' pk=basket.id %}">
@@ -111,45 +107,5 @@
         </div>
     {% endfor %}
 
-
-        {% if comment.writer == request.user %}
-            <a class="btn btn-sm btn-danger" href="{% url 'delete-comment' comment_id=comment.id %}">
-                <small>حذف</small>
-            </a>
-            <a class="btn btn-sm btn-primary" href="{% url 'edit-comment' comment_id=comment.id %}">
-                <small>ویرایش</small>
-            </a>
-        {% else %}
-        {% endif %}
-        {% if user.is_authenticated %}
-            {% comment %} <a class="btn btn-sm btn-info" href="{% url 'add-comment' comment_id=comment.id  %}">
-                <small>reply to this comment</small>
-            </a>    {% endcomment %}
-            {% comment %} <form action="{% url 'class_detail' post_id=post.id %}" method="post" >
-                {% csrf_token %}
-                <input type="submit" ,  class="btn btn-warning", value="Like this comment" , name="comment_like">
-            </form> {% endcomment %}
-            {% if check_like_comment %}
-                {% for like in check_like_comment.filter %}
-                    {% if like.comments == comment %}
-                        {% comment %} <form action="{% url 'comment-like' comment_id=comment.id %}"  method="post" >
-                            {% csrf_token %}
-                            <input type="submit" ,  class="btn btn-danger", value="UnLike this comment" , name="comment_like">
-                        </form> {% endcomment %}
-                    {% else %}
-                        {% comment %} <form action="{% url 'comment-like' comment_id=comment.id %}"  method="post" >
-                            {% csrf_token %}
-                            <input type="submit" ,  class="btn btn-warning", value="Like this comment" , name="comment_like">
-                        </form> {% endcomment %}
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-            {% endif %}
-            {% comment %} <form action="{% url 'comment-like' comment_id=comment.id %}"  method="post" >
-                {% csrf_token %}
-                <input type="submit" ,  class="btn btn-warning", value="Like this comment in else" , name="comment_like">
-            </form> {% endcomment %}
-
-        {% endif %}
 
 {% endblock content %}
