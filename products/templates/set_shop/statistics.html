@@ -64,6 +64,21 @@
         <hr>
     {% endif %}
 
+
+    <hr>
+    <div class="col-md-12">
+        <div class="row" style="height: 100%;">
+            <div class="col-md-12">
+                <form action="" method="post" >
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    start date : <input type="date" , value="like" , name="form2">
+                </form>
+            </div>
+        </div>
+    </div>
+    <hr>
+
     {% if baskets %}
         <div class="col-md-12 ">
             bought baskets :

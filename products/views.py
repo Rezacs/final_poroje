@@ -655,7 +655,8 @@ class ShopStatistics (DetailView):
             Q(status = 'load') |
             Q(status = 'canc') ).order_by('-added_date')
         products = Products.objects.filter(shop = self.get_object())
-        form = SelledItemsForm(self.request.POST, prefix="sells")
+        #form = SelledItemsForm(self.request.POST, prefix="sells")
+        form = FilterBaskets()
         baskets = Basket.objects.filter(Q(status = 'done') | Q(status = 'past')).filter(basketitem__in = sells)
         # basketitem__basket__in = sells
         context.update({
@@ -843,6 +844,10 @@ class DoneBasketItemsStatus (DetailView) :
         'user' : user ,
         })
         return context
+
+def base_template ( request ) :
+    basket = Basket.objects.filter(owner = request.user).filter(status = 'live')
+    return { 'basket' : basket}
 
 
 # force_authenticate(self.user)

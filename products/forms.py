@@ -205,3 +205,7 @@ class EditBasketItemForm ( forms.ModelForm ) :
 
 class FileFieldForm(forms.Form):
     file_field = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
+class FilterBaskets (forms.Form ):
+    start_date = forms.DateField(widget=forms.DateInput , label='start date')
+    end_date = forms.DateField(widget=forms.DateInput , label='end date')

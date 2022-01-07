@@ -68,11 +68,11 @@
         {% for shop in shops %}
             <div class="row">
                 <div class="col-md-6">
-                    {% if customer.image %}
+                    {% if shop.image %}
                         <p>
                             shop picture :
                         </p>
-                        <img src="{{shop.image.url}}" alt="image_of_post" style="width: 400px; height: 400px; border: solid red;">
+                        <img src="{{shop.image.url}}" alt="image_of_post" style="width: 280px; height: 280px; border: solid red;">
                     {% else %}
                         <p>
                             Default shop picture :
