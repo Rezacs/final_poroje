@@ -656,11 +656,14 @@ class ShopStatistics (DetailView):
             Q(status = 'canc') ).order_by('-added_date')
         products = Products.objects.filter(shop = self.get_object())
         form = SelledItemsForm(self.request.POST, prefix="sells")
+        baskets = Basket.objects.filter(Q(status = 'done') | Q(status = 'past')).filter(basketitem__in = sells)
+        # basketitem__basket__in = sells
         context.update({
         'sells' : sells,
         'products' : products ,
         'form' : form,
         'user' : user ,
+        'baskets' : baskets,
         })
         return context
 
@@ -719,7 +722,7 @@ def edit_baskeitem_status ( request , pk ) :
             if form.is_valid() :
                 form.save()
                 messages.add_message(request, messages.SUCCESS , 'status changed !')
-                return redirect(f'/onlineshop/shop_statistics/{item.product.shop.id}')
+                return redirect(f'/onlineshop/view_basket/{item.product.shop.id}/{item.basket.id}')
         else :
             return HttpResponse('you dont have permission to do this !')
     return render ( request , 'set_shop/edit_basket_item_status.html',{'form' : form , 'buyer' : buyer})
@@ -733,7 +736,7 @@ def edit_basket_item_quantity ( request , pk ) :
             form = EditBasketItemForm(request.POST , instance=item)
             if form.is_valid() :
                 form.save()
-                messages.add_message(request, messages.SUCCESS , 'quantity changes submited !')
+                messages.add_message(request, messages.SUCCESS , 'changes submited !')
                 return redirect('/onlineshop/basket')
         else :
             return HttpResponse('you dont have permission to do this !')
@@ -794,6 +797,37 @@ def product_liked_details (request , pk) :
     return render ( request , 'set_shop/product_like_detail.html' , {
         'likes':likes,
         'post' : postz
+    })
+
+@login_required(login_url='login-mk')
+def shop_owner_basket_detail ( request , shop_id ,  pk ) :
+    shop = get_object_or_404(Shop,id=shop_id)
+    basket = get_object_or_404(Basket , id = pk)
+    if request.user != shop.owner :
+        return HttpResponse('you dont have permission to do this !')
+    sells = BasketItem.objects.filter(product__shop = shop).filter(
+        Q(status = 'done') |
+        Q(status = 'load') |
+        Q(status = 'canc') ).filter(basket=basket)
+    form = SelledItemsForm(request.POST, prefix="sells")
+    customer = Customer.objects.get(mobile = basket.owner.mobile)
+    # if request.method == "POST" :
+    #     if 'form' in request.POST :
+    #         form = SelledItemsForm(request.POST) # validate
+    #         if form.is_valid() :
+    #             print(form.cleaned_data)
+    #             comment = form.save(commit=False)
+    #             comment.save()
+    #             messages.add_message(request, messages.SUCCESS, 'changes submited !')
+
+        #return redirect(f'/onlineshop/shop_statistics/{shop.id}')
+
+    return render(request , 'set_shop/shop_owner_basket_detail.html', {
+        'post' :shop,
+        'sells' : sells,
+        'form' : form,
+        'basket':basket,
+        'customer':customer,
     })
 
 # force_authenticate(self.user)

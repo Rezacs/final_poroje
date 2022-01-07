@@ -96,6 +96,7 @@ class BasketItem ( models.Model ) :
     quantity = models.PositiveIntegerField()
     basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
     added_date = models.DateTimeField(auto_now_add=True)
+    desc = models.TextField(blank=True , null=True)
     def __str__(self) -> str:
         return f"{self.product} factor {self.added_date}"
 

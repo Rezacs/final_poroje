@@ -46,8 +46,10 @@
     </div>
 
     {% if photos %}
+    <hr>
     <div class="col-md-12">
         <div class="row" style="height: 100%;">
+            <h3>Externl photos :</h3>
             {% for photo in photos %}
                 <img class="responsive" src="{{photo.image.url}}" alt="image_of_post" style="width: 300px; height: 300px; border: solid red; margin-left: 10px;">
             {% endfor %}

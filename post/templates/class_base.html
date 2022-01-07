@@ -114,9 +114,11 @@
                             <a class="btn btn-sm btn-primary" style="margin-left: 5px;" href="/dashboard">
                                 <small>dashboard</small>
                             </a>
-                            <a class="btn btn-sm btn-warning" style="margin-left: 5px;" href="/onlineshop/dashboard">
-                                <small>Shop - dashboard</small>
-                            </a>
+                            {% if user.shop_set %}
+                                <a class="btn btn-sm btn-warning" style="margin-left: 5px;" href="/onlineshop/dashboard">
+                                    <small>Shop - dashboard</small>
+                                </a>
+                            {% endif %}
                         {% else %}
                             <a class="btn btn-sm btn-outline-primary" style="margin-left: 5px;" href="/dashboard">
                                 <small>login</small>
@@ -140,8 +142,9 @@
                 </div>
             </nav>
         </div>
-            <hr>
-            <hr>
+        <div id="gradient" style="height: 70px;">
+        </div>
+
         <!-- Section-->
         {% comment %} <div class="container" style="text-align: center; min-height: 400px; margin-top: 30px; margin-bottom: 30px;  ">
             <div class="row">
@@ -191,6 +194,12 @@
             
             {% endblock content %}
         </div>
+
+        <style>
+            #gradient {
+                background: linear-gradient(to bottom, #33ccff 0%, #ffffff 105%);
+            }
+        </style>
 
         <footer class="py-5 bg-dark">
             <div class="container">

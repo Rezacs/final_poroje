@@ -17,10 +17,6 @@
             <div class="col-md-6">
                 <h1>title : {{post.name}}</h1>
                 <a href="/user/{{post.owner}}"><h2>user : {{post.owner}}</h2></a>
-                <p>shortdesc : {{post.shortdesc}}</p>
-                <small>{{post.created_on}}</small>
-                <br>
-                <h1> slug : {{post.slug}}</h1>
             </div>
         </div>
     </div>
@@ -48,56 +44,71 @@
         </div>
     </div>
     <hr>
-    
-    <p>
-        <h1>
-            Total sells = {{sells.count}}
-        </h1>
-    </p>
-    
 
-    {% if post.admin_description %}
-        <hr>   
-        {% if request.user == post.owner %}
-            admin comment : {{post.admin_description}}
-        {% endif %}
-        <hr>
-    {% endif %}
-
-    {% if baskets %}
-        <div class="col-md-12 ">
-            bought baskets :
-            <div class="row mt-1 g-3 btn-light " style="height: 100%;">
-                {% for basket in baskets %}
-                    <div class="col-md-4 " style="height: auto; ">
-                        <div class="card h-100" style="margin-bottom: 30px;" >
-                            <small>bought at : {{basket.Chekedout_date}}</small>
-                            
-                            {% if basket.owner.username %}
-                                <a class="btn btn-sm btn-primary" href="/user/{{basket.owner.username}}">
-                                    bought by : {{basket.owner.username}}
-                                </a> 
-                            {% else %}
-                                <a class="btn btn-sm btn-primary" href="/user/{{basket.owner.username}}">
-                                    {{basket.owner.mobile}}
-                                </a>   
-                            {% endif %}
-                            <a class="btn btn-sm btn-warning" href="/onlineshop/view_basket/{{post.id}}/{{basket.id}}" style="margin-top: 30px;">
-                                <small>See items</small>
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
+    <div class="col-md-12">
+        <div class="row" style="height: 100%;">
+            <h1>Basket Info :</h1>
+            <div class="col-md-6">
+                <p>
+                    basket id : {{basket.id}}
+                </p>
+                <p>
+                    bought by :
+                    {% if basket.owner.username %}
+                        <a class="btn btn-sm btn-primary" href="/user/{{basket.owner.username}}">
+                            {{basket.owner.username}}
+                        </a> 
+                    {% else %}
+                        <a class="btn btn-sm btn-primary" href="/user/{{basket.owner.username}}">
+                            {{basket.owner.mobile}}
+                        </a>   
+                    {% endif %}
+                    {% if customer.first_name %}
+                        <p>
+                            first name : {{customer.first_name}}
+                        </p>
+                    {% endif %}
+                    {% if customer.last_name %}
+                        <p>
+                            first name : {{customer.last_name}}
+                        </p>
+                    {% endif %}
+                </p>
+                <p>
+                    bought at : {{basket.Chekedout_date}}
+                </p>
+                <p>
+                    Total amount of ptoduct from your shop : {{sells.count}}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p>
+                    Address :
+                </p>
+                <p>
+                    {{basket.address.country}}-{{basket.address.city}}
+                </p>
+                <p>
+                    {{basket.address.street}}-{{basket.address.alley}}
+                </p>
+                <p>
+                    pelak : {{basket.address.number}} - code post : {{basket.address.zip}}
+                </p>
+                {% if basket.address.desc %}
+                    <p>
+                        tozihe address : {{basket.address.desc}}
+                    </p>              
+                {% endif %}
             </div>
         </div>
-    {% else %}
-        <h1>No Sells Yet !</h1>
-    {% endif %}
+    </div>
+    <hr>
 
-    {% comment %} sells :
+    <h1 style="color: rgb(218, 215, 33);">LOAD :</h1>
+
     <div class="col-md-12 ">
         <div class="row mt-1 g-3 btn-light " style="height: 100%;">
-            <p style="justify-content: center;" >live bought products :</p>
+            <p style="justify-content: center;" >live products :</p>
             {% for sell in sells %}
                 {% if sell.status == 'load' %}
                     <div class="col-md-3 " style="height: auto; ">
@@ -126,7 +137,7 @@
                                     </a>
                                 {% endif %}
                             </small>
-                            <small , style="border: solid rgb(162, 218, 33);">{{sell.status}}</small>
+                            <small , style="border: solid rgb(94, 47, 202);">{{sell.status}}</small>
                             <small>
                                 <p>
                                         <a href="/onlineshop/product_detail/{{sell.product.id}}">show detail</a>
@@ -144,12 +155,12 @@
             {% endfor %}
         </div>
     </div>
-    not live items : 
+    <h1 style="color: rgb(218, 70, 33);">CANCELED :</h1>
     <div class="col-md-12 ">
         <div class="row mt-1 g-3 btn-light " style="height: 100%;">
-            <p style="justify-content: center;" >NOTlive bought products :</p>
+            <p style="justify-content: center;" >canceled products :</p>
             {% for sell in sells %}
-                {% if sell.status != 'load' %}
+                {% if sell.status == 'canc' %}
                     <div class="col-md-3 " style="height: auto; ">
                         <div class="card h-100" style="border: solid rgb(157, 194, 194);">
                             <div style="justify-content: center;"> 
@@ -161,8 +172,9 @@
                             </div>
                             <br>
                             <h1>{{sell.product.name}}</h1>
+                            <small>quantity : {{sell.quantity}}</small>
                             <small>{{sell.basket.order_date | date}}</small>
-                            <small , style="border: solid rgb(60, 202, 47);">{{sell.status}}</small>
+                            <small , style="border: solid rgb(94, 47, 202);">{{sell.status}}</small>
                             <small>
                                 <p>
                                         <a href="/onlineshop/product_detail/{{sell.product.id}}">show detail</a>
@@ -180,44 +192,45 @@
             {% endfor %}
         </div>
     </div>
-    <hr> {% endcomment %}
 
-    Products :
-    <div class="col-md-12 " style="margin-bottom: 50px;">
+    <h1 style="color: rgb(92, 218, 33);">COMPLETED :</h1>
+    <div class="col-md-12 ">
         <div class="row mt-1 g-3 btn-light " style="height: 100%;">
-            {% for product in products %}
-                <div class="col-md-3 " style="height: auto; ">
-                    <div class="card h-100" >
-                        <div style="justify-content: center;"> 
-                            {% if product.image %}
-                                <img src="{{product.image.url}}" alt="image_of_post" style="width: 100px; height: 100px; border: solid red; margin-top: 5px;">
-                            {% else %}
-                                <img src="{% static 'download.jpeg' %}" alt="image_of_post" style="width: 100px; height: 100px; border: solid red;margin-top: 5px;">
-                            {% endif %}
+            <p style="justify-content: center;" >successfuly completed products :</p>
+            {% for sell in sells %}
+                {% if sell.status == 'done' %}
+                    <div class="col-md-3 " style="height: auto; ">
+                        <div class="card h-100" style="border: solid rgb(157, 194, 194);">
+                            <div style="justify-content: center;"> 
+                                {% if sell.product.image %}
+                                    <img src="{{product.image.url}}" alt="image_of_post" style="width: 100px; height: 100px; border: solid red; margin-top: 5px;">
+                                {% else %}
+                                    <img src="{% static 'download.jpeg' %}" alt="image_of_post" style="width: 100px; height: 100px; border: solid red;margin-top: 5px;">
+                                {% endif %}
+                            </div>
+                            <br>
+                            <h1>{{sell.product.name}}</h1>
+                            <small>quantity : {{sell.quantity}}</small>
+                            <small>{{sell.basket.order_date | date}}</small>
+                            <small , style="border: solid rgb(94, 47, 202);">{{sell.status}}</small>
+                            <small>
+                                <p>
+                                        <a href="/onlineshop/product_detail/{{sell.product.id}}">show detail</a>
+                                    <br>
+                                        <a href="class_category_posts/gslug/{{product.slug}}">show detail via SLUG </a>
+                                </p>
+                            </small>
+                            <hr>
+                            <a class="btn btn-sm btn-primary" href="/onlineshop/edit_item_status/{{sell.id}}">
+                                <small>Edit status</small>
+                            </a>
                         </div>
-                        <br>
-                        <h1>{{product.name}}</h1>
-                        <p>desc : {{product.desc}}</p>
-                        <small>{{product.created_on | date}}</small>
-                        <!-- <h3>{{post.tag}}</h3> -->
-                        <p>
-                            tags :
-                            {% for t in product.tag.all  %}
-                                {{t}}-
-                            {% endfor %}
-                        </p>
-                        <small>
-                            <p>
-                                    <a href="/onlineshop/product_detail/{{product.id}}">show detail</a>
-                                <br>
-                                    <a href="class_category_posts/gslug/{{product.slug}}">show detail via SLUG </a>
-                            </p>
-                        </small>
-                        <hr>
                     </div>
-                </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
+
+    <hr>
 
 {% endblock content %}
