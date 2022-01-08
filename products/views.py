@@ -163,6 +163,7 @@ class AddShop(CreateView):
             messages.add_message(self.request, messages.WARNING, 'you have a not verified shop ... wait !')
             return redirect(reverse('shop-dashboard'))
         self.object = form.save(commit=False)
+        self.object.status = 'load'
         self.object.owner = self.request.user
         self.object.customer= Customer.objects.get(mobile = self.request.user.mobile)
         self.object.save()
@@ -262,8 +263,8 @@ class AddProduct(View):
         #self
         self.object = None
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
-        print('gggggggggggggggggggggg' , shop , '  -  ' , shop.first().id )
-        print('ggggggg2222222' , shop , '  -  ' , self.request.GET )
+        #print('gggggggggggggggggggggg' , shop , '  -  ' , shop.first().id )
+        #print('ggggggg2222222' , shop , '  -  ' , self.request.GET )
         if not shop :
             messages.add_message(request, messages.WARNING , 'your shop is not verified !')
             return redirect(f"/onlineshop/view_shop/{self.kwargs['ids'] }")
@@ -768,7 +769,7 @@ class FileFieldFormView(FormView):
         form = self.get_form(form_class)
         files = request.FILES.getlist('file_field')
         product = Products.objects.filter(id = self.kwargs['pk'])
-        if self.request.user != product.shop.owner :
+        if self.request.user != product[0].shop.owner :
             return HttpResponse('you dont have permission to do this !')
         if form.is_valid():
             for f in files:
@@ -781,7 +782,7 @@ class FileFieldFormView(FormView):
     def get(self, request, *args, **kwargs):
         self.object = None
         product = Products.objects.filter(id = self.kwargs['pk'])
-        if self.request.user != product.shop.owner :
+        if self.request.user != product[0].shop.owner :
             return HttpResponse('you dont have permission to do this !')
         if not product :
             messages.add_message(request, messages.WARNING , 'no such product !')

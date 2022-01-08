@@ -74,7 +74,7 @@
                         <div class="card h-100" style="border: solid rgb(18, 238, 73);">
                             <div style="justify-content: center;"> 
                                 {% if sell.product.image %}
-                                    <img src="{{product.image.url}}" alt="image_of_post" style="width: 100px; height: 100px; border: solid red; margin-top: 5px;">
+                                    <img src="{{sell.product.image.url}}" alt="image_of_post" style="width: 100px; height: 100px; border: solid red; margin-top: 5px;">
                                 {% else %}
                                     <img src="{% static 'download.jpeg' %}" alt="image_of_post" style="width: 100px; height: 100px; border: solid red;margin-top: 5px;">
                                 {% endif %}
