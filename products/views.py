@@ -568,8 +568,8 @@ def basket ( request ) :
     if live :
         for p in live_items :
             live_products_count += (p.quantity)
-        print('llllllllllllllllllll',live_products_count)
-        print('jjjjjjjjjjjjjjjjj',live)
+        #print('llllllllllllllllllll',live_products_count)
+        #print('jjjjjjjjjjjjjjjjj',live)
         live[0].total_products_count = live_products_count
         live[0].save()
     for basket in baskets :
@@ -847,8 +847,10 @@ class DoneBasketItemsStatus (DetailView) :
         return context
 
 def base_template ( request ) :
-    basket = Basket.objects.filter(owner = request.user).filter(status = 'live')
-    return { 'basket' : basket}
+    base_basket = Basket.objects.filter(owner = request.user).filter(status = 'live')
+    live_basket_items_xx = BasketItem.objects.filter(basket = base_basket[0])
+    print('jjjjjjjjjjjjjjjjj' , live_basket_items_xx)
+    return { 'live_basket_items_xx' : live_basket_items_xx}
 
 
 # force_authenticate(self.user)

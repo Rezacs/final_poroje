@@ -35,7 +35,7 @@ class Shop ( models.Model ) :
     desc = models.TextField(max_length = 250, null = True, blank = True ,)
     image = models.ImageField(upload_to='uploads',null=True,blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    # category = models.ForeignKey(Category, on_delete=models.CASCADE ,blank=True , null=True)
+    type = models.ForeignKey(Type  , null = True, blank = True , on_delete=models.SET_NULL)
     category = models.ManyToManyField(Category,blank=True , null=True  )
     Address = models.TextField( blank=True , null=True)
     contact_number = models.TextField( blank=True , null=True)

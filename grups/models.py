@@ -1,21 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-# class Grups ( models.Model ) :
-#     name = models.CharField(max_length=300 , unique=True)
-#     desc = models.TextField()
-
-#     def __str__(self) -> str:
-#         return self.name
-
-# class Secondary_group ( models.Model ) :
-#     name = models.CharField(max_length=300 , unique=True)
-#     desc = models.TextField()
-#     groupp = models.ForeignKey(Grups, on_delete=models.CASCADE)
-
-#     def __str__(self) -> str:
-#         return self.name
-
 class Category ( models.Model ) :
     name = models.CharField(max_length=300 , unique=True , blank=True)
     created_on = models.DateTimeField( auto_now_add=True , blank=True , null=True)
@@ -40,3 +25,7 @@ class Tag ( models.Model ) :
 
     def __str__(self) -> str:
         return self.name
+
+class Type (models.Model ) :
+    name = models.CharField(max_length=300 , unique=True)
+
