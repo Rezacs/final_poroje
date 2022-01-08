@@ -308,8 +308,11 @@ from rest_framework import generics, mixins
 
 #@permission_classes([IsAuthenticated])
 class PostListFilter(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = Post.objects.all()
+    #queryset = Post.objects.all()
     filterset_class = PostListFilterss
+
+    def get_queryset(self):
+        return Post.objects.filter(writer = self.request.user)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -319,17 +322,17 @@ class PostListFilter(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Ge
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return PostSerializer
+            return PostUpdateSerializer
         elif self.request.method == 'POST':
             return PostUpdateSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)  # PostCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        post = self.perform_create(serializer)
-        resp_serializer = PostUpdateSerializer(post)
-        headers = self.get_success_headers(serializer.data)
-        return Response(resp_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)  # PostCreateSerializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     post = self.perform_create(serializer)
+    #     resp_serializer = PostUpdateSerializer(post)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(resp_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
         #serializer.save(commit=False)

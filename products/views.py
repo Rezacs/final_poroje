@@ -854,3 +854,7 @@ def base_template ( request ) :
 
 
 # force_authenticate(self.user)
+
+# faze 3 :
+
+

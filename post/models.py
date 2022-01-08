@@ -123,7 +123,7 @@ class Post(CommonInfo):
         return f"{self.title} - {self.shortdesc}"
 
     class Meta:
-        ordering = ['-created_on']
+        unique_together = [['writer' , 'title']]
 
     # def time_status(self,param1):
     #     # نمایش اینکه چند ساعت درست شده پست ؟ تمرین
