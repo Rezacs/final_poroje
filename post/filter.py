@@ -2,6 +2,7 @@
 import django_filters
 
 from post.models import Post
+from products.models import Products
 
 
 class PostListFilterss(django_filters.FilterSet):
@@ -19,3 +20,9 @@ class PostListFilterss(django_filters.FilterSet):
         #     'created_on': ['exact', 'year__gt' , 'month__lt'],
         #     'category' : ['exact']
         # }
+
+class ProductFilters ( django_filters.FilterSet) :
+    name = django_filters.CharFilter( field_name='name' , lookup_expr='contains')
+    # class Meta :
+    #     model = Products
+    #     fields = ['name']

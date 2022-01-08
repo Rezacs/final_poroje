@@ -3,21 +3,17 @@
 # from django.contrib.auth.models import User
 
 from rest_framework import fields, serializers
+from basket.models import BasketItem
 from commentandlike.models import *
 
 from post.models import Post
 from customer.models import *
 from products.models import *
 
-class ProductsListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Products
-        fields = ['name']
-
-class ProductsDetailListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Products
-        fields = '__all__'
+# class ProductsDetailListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Products
+#         fields = '__all__'
 
 class CustomerListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,7 +30,15 @@ class ProductsLikeSerializer(serializers.ModelSerializer):
         model = Products_Likes
         fields = '__all__'
 
+class ProductsListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Products
+        exclude = ['weight']
 
+class BasketItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BasketItem
+        exclude = ['basket' , 'added_date' , 'status']
 
 
 

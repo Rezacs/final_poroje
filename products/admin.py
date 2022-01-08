@@ -65,7 +65,7 @@ class ShopAdmin(admin.ModelAdmin) :
     #     super().save_model(request, obj, form, change)
 
 class ProductAdmin(admin.ModelAdmin) :
-    list_display = ('name' ,'desc', 'shop' , 'price','quantity' , 'show_image' , 'created_on')
+    list_display = ('name' ,'pk', 'shop' , 'price','quantity' , 'show_image' , 'created_on')
     list_filter = ( 'price' , 'created_on' , 'shop' , 'category')
     search_fields = ('name' ,)
     date_hierarchy = ('created_on')

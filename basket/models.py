@@ -3,6 +3,8 @@ from django.db.models.fields import IntegerField
 
 from customer.models import *
 from products.models import *
+from django.contrib import messages
+
 
 # class Basket ( models.Model ) :
 #     products = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -78,7 +80,7 @@ class Basket ( models.Model ) :
     #     super(Shop,self).save(*args , **kwargs)
 
     def __str__(self) -> str:
-        return f"{self.owner} factor on {self.order_date}"
+        return f"{self.owner} factor on {self.order_date} - {self.pk}"
 
 class BasketItem ( models.Model ) :
     STATUS_CHOICES = [ 
@@ -101,7 +103,9 @@ class BasketItem ( models.Model ) :
         return f"{self.product} factor {self.added_date}"
 
     def save(self , *args , **kwargs) :
-        self.basket.price = str( self.quantity * self.product.price)
+        if self.quantity > self.product.quantity :
+            #messages.add_message(None, messages.SUCCESS, 'product was edited !')
+            self.quantity = self.product.quantity
         super(BasketItem,self).save(*args , **kwargs)
 
 class Order ( models.Model ) :

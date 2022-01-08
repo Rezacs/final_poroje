@@ -1,3 +1,4 @@
+from django.http import request
 from django.shortcuts import render
 from django.views.generic import *
 from basket.models import Basket
@@ -22,7 +23,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-
+from products.serializers import *
 
 @api_view(['GET'])
 def products_list_2(request):
@@ -848,7 +849,10 @@ class DoneBasketItemsStatus (DetailView) :
 
 def base_template ( request ) :
     base_basket = Basket.objects.filter(owner = request.user).filter(status = 'live')
-    live_basket_items_xx = BasketItem.objects.filter(basket = base_basket[0])
+    if base_basket :
+        live_basket_items_xx = BasketItem.objects.filter(basket = base_basket[0])
+    else :
+        live_basket_items_xx = None
     print('jjjjjjjjjjjjjjjjj' , live_basket_items_xx)
     return { 'live_basket_items_xx' : live_basket_items_xx}
 
@@ -856,5 +860,77 @@ def base_template ( request ) :
 # force_authenticate(self.user)
 
 # faze 3 :
+
+from post.filter import *
+from products.serializers import *
+
+class APIProductListFilter(mixins.ListModelMixin, generics.GenericAPIView):
+    queryset = Products.objects.all()
+    filterset_class = ProductFilters
+    serializer_class = ProductsListSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_serializer_context(self):
+        """
+        Extra context provided to the serializer class.
+        """
+        return {
+            'request': self.request,
+            'format': self.format_kwarg,
+            'view': self,
+            'user': self.request.user,
+        }
+
+class APIAddtoBasket(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = BasketItem.objects.filter(basket__status = 'live')
+    #filterset_class = PostListFilterss
+    serializer_class = BasketItemSerializer
+
+    # def get_queryset(self):
+    #     if not Basket.objects.filter(owner = self.request.user).filter(status = 'live') :
+    #         return None
+    #     return BasketItem.objects.filter(basket__status = 'live').filter(basket__owner = self.request.user)
+
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def get_serializer_class(self):
+        return BasketItemSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)  # PostCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        post = self.perform_create(serializer)
+        resp_serializer = BasketItemSerializer(post)
+        headers = self.get_success_headers(serializer.data)
+        return Response(resp_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        #serializer.save(commit=False)
+        #serializer.writer = self.request.user
+        #serializer.customer = Customer.objects.get(user_name=self.request.user.username)
+        basket = Basket.objects.filter(owner = self.request.user).filter(status = 'live')
+        if not basket :
+            Basket.objects.create(owner = self.request.user , status = 'live')
+            basket = Basket.objects.filter(owner = self.request.user).filter(status = 'live')
+        #items = BasketItem.objects.filter(basket = basket).filter(product = self.get_serializer(data=request.data))
+        return serializer.save(basket = basket[0] )
+
+    # def get_serializer_context(self):
+    #     """
+    #     Extra context provided to the serializer class.
+    #     """
+    #     return {
+    #         'request': self.request,
+    #         'format': self.format_kwarg,
+    #         'view': self,
+    #         'user': self.request.user
+    #     }
 
 

@@ -118,7 +118,7 @@ class Products ( models.Model ) :
     UNAvailable = UnavailableProduct()
 
     def __str__(self) -> str:
-        return f'{self.shop} - {self.name}'
+        return f'{self.shop} - {self.name} - {self.pk}'
 
     class Meta :
         unique_together = [['shop' , 'name']]

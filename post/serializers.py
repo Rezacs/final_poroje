@@ -8,6 +8,7 @@ from grups.models import Category
 
 from post.models import Post
 from customer.models import *
+from products.models import Products
 
 class PostListSerializer(serializers.ModelSerializer):
     class Meta:
