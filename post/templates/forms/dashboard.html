@@ -49,48 +49,50 @@
                 </h5>
                 <hr>
 
-                <a class="btn btn-sm btn-primary" href="post_urls/personal_info">
-                    <small>edit personal info</small>
-                </a>
+                <button onclick="myFunction2()" id="buttonss" >Click to show options</button>
+                <div id="myDIV2" style="display: none; margin-top: 30px;">
+                    <a class="btn btn-sm btn-primary" href="post_urls/personal_info">
+                        <small>edit personal info</small>
+                    </a>
 
-                <a class="btn btn-sm btn-dark" href="post_urls/drafteds">
-                    <small>draft posts</small>
-                </a>
+                    <a class="btn btn-sm btn-dark" href="post_urls/drafteds">
+                        <small>draft posts</small>
+                    </a>
 
-                <a class="btn btn-sm btn-primary" href="post_urls/new_password">
-                    <small>change password</small>
-                </a>
-                
-                <br>
+                    <a class="btn btn-sm btn-primary" href="post_urls/new_password">
+                        <small>change password</small>
+                    </a>
+                    
+                    <br>
 
-                <a class="btn btn-sm btn-primary" href="post_urls/new_post" style="margin-top: 30px;">
-                    <small>NEW POST</small>
-                </a>
+                    <a class="btn btn-sm btn-primary" href="post_urls/new_post" style="margin-top: 30px;">
+                        <small>NEW POST</small>
+                    </a>
 
-                <a class="btn btn-sm btn-danger" href="post_urls/edit_username" style="margin-top: 30px;">
-                    <small>edit username</small>
-                </a>
+                    <a class="btn btn-sm btn-danger" href="post_urls/edit_username" style="margin-top: 30px;">
+                        <small>edit username</small>
+                    </a>
 
-                <a class="btn btn-sm btn-warning" href="post_urls/inbox" style="margin-top: 30px;">
-                    <small>see messages</small>
-                </a>
+                    <a class="btn btn-sm btn-warning" href="post_urls/inbox" style="margin-top: 30px;">
+                        <small>see messages</small>
+                    </a>
 
-                <a class="btn btn-sm btn-light" href="post_urls/notify_followers" style="margin-top: 30px;">
-                    <small>notify all followers</small>
-                </a>
+                    <a class="btn btn-sm btn-light" href="post_urls/notify_followers" style="margin-top: 30px;">
+                        <small>notify all followers</small>
+                    </a>
 
-                <a class="btn btn-sm btn-light" href="post_urls/liked_posts" style="margin-top: 30px;">
-                    <small>see liked posts</small>
-                </a>
+                    <a class="btn btn-sm btn-light" href="post_urls/liked_posts" style="margin-top: 30px;">
+                        <small>see liked posts</small>
+                    </a>
 
-                <a class="btn btn-sm btn-dark" href="post_urls/addresses" style="margin-top: 30px;">
-                    <small>see linked addresses </small>
-                </a>
+                    <a class="btn btn-sm btn-dark" href="post_urls/addresses" style="margin-top: 30px;">
+                        <small>see linked addresses </small>
+                    </a>
 
-                <a class="btn btn-sm btn-primary" href="onlineshop/dashboard" style="margin-top: 30px;">
-                    <small>Shop Dashboard</small>
-                </a>
-
+                    <a class="btn btn-sm btn-primary" href="onlineshop/dashboard" style="margin-top: 30px;">
+                        <small>Shop Dashboard</small>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -158,6 +160,35 @@
         <h1 style="color: red;">No Posts Yet !</h1>
     {% endif %}
 
-    
+    <script>
+        function myFunction2() {
+          var x = document.getElementById("myDIV2");
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+    </script>
+
+    <style>
+        #buttonss:hover {
+        background-color: #4CAF50; /* Green */
+        color: white;
+        }
+        #buttonss {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        }
+        #buttonss {
+        transition-duration: 0.4s;
+        }
+    </style>
       
 {% endblock content %}

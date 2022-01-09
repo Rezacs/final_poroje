@@ -3,7 +3,7 @@
 # from django.contrib.auth.models import User
 
 from rest_framework import fields, serializers
-from basket.models import BasketItem
+from basket.models import Basket, BasketItem
 from commentandlike.models import *
 
 from post.models import Post
@@ -15,15 +15,15 @@ from products.models import *
 #         model = Products
 #         fields = '__all__'
 
-class CustomerListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Products
-        fields = ['user_name']
+# class CustomerListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Products
+#         fields = ['user_name']
 
-class CustomerDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Products
-        fields = '__all__'
+# class CustomerDetailSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Products
+#         fields = '__all__'
 
 class ProductsLikeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,10 +35,38 @@ class ProductsListSerializer(serializers.ModelSerializer):
         model = Products
         exclude = ['weight']
 
+
+class BasketSerializer (serializers.ModelSerializer) :
+    class Meta :
+        model = Basket
+        exclude = ['owner']
+
+class BasketEditSerializer (serializers.ModelSerializer) :
+    class Meta :
+        model = Basket
+        exclude = ['owner' , 'Chekedout_date' , 'total_products_count' , 'created_date' , 'order_date' , 'price']
+
 class BasketItemSerializer(serializers.ModelSerializer):
+    basket = BasketSerializer(read_only=True)
     class Meta:
         model = BasketItem
-        exclude = ['basket' , 'added_date' , 'status']
+        exclude = [ 'added_date' , 'status']
+        #depth = 1
+
+class ShopListSerializer (serializers.ModelSerializer) :
+    class Meta :
+        model = Shop
+        fields = '__all__'
+
+class CustomerSerializer (serializers.ModelSerializer) :
+    class Meta :
+        model = Customer
+        fields = '__all__'
+
+class CustomerEditSerializer (serializers.ModelSerializer) :
+    class Meta :
+        model = Customer
+        exclude = [ 'mobile' , 'date_joined']
 
 
 

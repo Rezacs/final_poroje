@@ -848,9 +848,12 @@ class DoneBasketItemsStatus (DetailView) :
         return context
 
 def base_template ( request ) :
-    base_basket = Basket.objects.filter(owner = request.user).filter(status = 'live')
-    if base_basket :
-        live_basket_items_xx = BasketItem.objects.filter(basket = base_basket[0])
+    if request.user.is_authenticated:
+        base_basket = Basket.objects.filter(owner = request.user).filter(status = 'live')
+        if base_basket :
+            live_basket_items_xx = BasketItem.objects.filter(basket = base_basket[0])
+        else :
+            live_basket_items_xx = None
     else :
         live_basket_items_xx = None
     print('jjjjjjjjjjjjjjjjj' , live_basket_items_xx)
@@ -861,11 +864,11 @@ def base_template ( request ) :
 
 # faze 3 :
 
-from post.filter import *
+from products.filter import *
 from products.serializers import *
 
-class APIProductListFilter(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Products.objects.all()
+class ProductList_API(mixins.ListModelMixin, generics.GenericAPIView):
+    queryset = Products.objects.filter(shop__status = 'chek')
     filterset_class = ProductFilters
     serializer_class = ProductsListSerializer
 
@@ -883,8 +886,9 @@ class APIProductListFilter(mixins.ListModelMixin, generics.GenericAPIView):
             'user': self.request.user,
         }
 
-class APIAddtoBasket(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = BasketItem.objects.filter(basket__status = 'live')
+class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = BasketItem.objects.all()
+    # (basket__status = 'live')
     #filterset_class = PostListFilterss
     serializer_class = BasketItemSerializer
 
@@ -894,7 +898,7 @@ class APIAddtoBasket(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Ge
     #     return BasketItem.objects.filter(basket__status = 'live').filter(basket__owner = self.request.user)
 
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs): 
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -922,15 +926,77 @@ class APIAddtoBasket(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Ge
         #items = BasketItem.objects.filter(basket = basket).filter(product = self.get_serializer(data=request.data))
         return serializer.save(basket = basket[0] )
 
-    # def get_serializer_context(self):
-    #     """
-    #     Extra context provided to the serializer class.
-    #     """
-    #     return {
-    #         'request': self.request,
-    #         'format': self.format_kwarg,
-    #         'view': self,
-    #         'user': self.request.user
-    #     }
+class BasketDetailUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
+    lookup_field = 'id'
+    lookup_url_kwarg = 'id'
+    #queryset = Basket.objects.all()
+
+    def get_queryset(self):
+        return Basket.objects.filter(owner = self.request.user)
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return BasketSerializer
+        else:
+            return BasketEditSerializer
+
+class ShopList_API(mixins.ListModelMixin, generics.GenericAPIView):
+    queryset = Shop.accepted.all()
+    filterset_class = ShopFilters
+    serializer_class = ShopListSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class CustomerProfile_API(mixins.ListModelMixin, mixins.UpdateModelMixin , generics.GenericAPIView):
+    """
+    Takes a id of user and returns the informations of it
+    """
+    #queryset = Customer.objects.get(mobile =  )
+    lookup_field = 'id'
+    #filterset_class = ShopFilters
+    serializer_class = CustomerSerializer
+
+    def get_queryset(self):
+        #specified_user = get_object_or_404(User,id=self.kwargs['id'])
+        return Customer.objects.filter(pk = self.kwargs['id'])
+
+    def get(self, request, *args, **kwargs): 
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if self.request.user.mobile == Customer.objects.get(pk = self.kwargs['id']).mobile :
+            return self.update(request, *args, **kwargs)
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CustomerSerializer
+        else:
+            return CustomerEditSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        if self.get_object().mobile == self.request.user.mobile :
+            serializer.save()
+        else :
+            pass
+
+    # def partial_update(self, request, *args, **kwargs):
+    #     kwargs['partial'] = True
+    #     return self.update(request, *args, **kwargs)
 
 

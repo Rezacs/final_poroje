@@ -72,8 +72,6 @@ urlpatterns = [
     path('user/<str:username>' , user_page, name='page-view'),
     path('contact_us' , contact_us , name='contact-us'),
     # jwt
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     #reset password
     path('password-reset/', ResetPasswordView.as_view(), name='password-reset'),
     path('password-reset-confirm/<uidb64>/<token>/',

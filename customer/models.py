@@ -18,7 +18,7 @@ class Customer ( models.Model ) :
     ]
     first_name = models.CharField(max_length=300 ,blank=True , null=True)
     last_name = models.CharField(max_length=300,blank=True , null=True)
-    user_name = models.CharField(max_length=100 , unique=True ,blank=True , null=True )
+    #user_name = models.CharField(max_length=100 , unique=True ,blank=True , null=True )
     desc = models.TextField(blank=True , null=True)
     # country = models.CharField(max_length=300)
     # city = models.CharField(max_length=300)
@@ -41,9 +41,6 @@ class Customer ( models.Model ) :
     date_joined = models.DateTimeField(auto_now_add=True)
     email = models.EmailField(blank=True , null=True)
     birthday = models.DateField(blank=True , null=True)
-
-    class Meta:
-        ordering = ['user_name']
 
     def __str__(self):
         return str(self.mobile)
