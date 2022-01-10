@@ -15,7 +15,21 @@
     /* img {
         border-radius: 30%;
         } */
-
+.feature-card {
+  -webkit-box-direction: normal;
+  -webkit-box-flex: 1;
+  -webkit-box-orient: vertical;
+  background-color: #e02828;
+  border-radius: 8px;
+  color: #333;
+  display: block;
+  flex: 1;
+  flex-direction: column;
+  font-family: CerebriSans-Regular,-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+  margin: .25rem .5em;
+  padding: 40px 28px;
+  text-align: center;
+}
 
 :root {
   --bs-blue: #0d6efd;

@@ -919,12 +919,18 @@ class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.G
         #serializer.save(commit=False)
         #serializer.writer = self.request.user
         #serializer.customer = Customer.objects.get(user_name=self.request.user.username)
+        #items = BasketItem.objects.filter(basket = basket).filter(product = self.get_serializer(data=request.data))
         basket = Basket.objects.filter(owner = self.request.user).filter(status = 'live')
         if not basket :
             Basket.objects.create(owner = self.request.user , status = 'live')
             basket = Basket.objects.filter(owner = self.request.user).filter(status = 'live')
-        #items = BasketItem.objects.filter(basket = basket).filter(product = self.get_serializer(data=request.data))
-        return serializer.save(basket = basket[0] )
+        item = BasketItem.objects.filter(basket = basket)
+        #print('ittttttt' , item)
+        #item = get_object_or_404(BasketItem , basket = basket)
+        if not item :
+            return serializer.save(basket = basket[0] )
+        else :
+            pass
 
 class BasketDetailUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'

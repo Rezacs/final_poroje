@@ -3,11 +3,12 @@
 {% load static %}
 
 {% block content %}
+    
     <h1>post list :</h1>
     <div class="col-md-12 ">
             <div class="row mt-1 g-3 btn-light " style="height: 100%;">
                 {% for post in posts %}
-                    <div class="col-md-3 " style="height: auto; ">
+                    <div class="col-md-3 feature-card " style="height: auto; ">
                         <div class="card h-100" >
                             <div style="justify-content: center;"> 
                                 {% if post.image %}
@@ -39,7 +40,5 @@
                 {% endfor %}
             </div>
     </div>
-
-
       
 {% endblock content %}
