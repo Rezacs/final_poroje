@@ -581,7 +581,7 @@ def basket ( request ) :
                     basket.price += ( item.product.price * item.quantity )
             basket.save()
 
-    customer = Customer.objects.get(user_name=user.username)
+    customer = Customer.objects.get(mobile=user.mobile)
     return render ( request , 'baskets.html' , {
         'baskets' :baskets,
         'user' : user,

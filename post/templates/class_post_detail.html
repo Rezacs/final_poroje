@@ -17,24 +17,12 @@
             <div class="col-md-6" style="border-left: 6px solid green;">
                 <h1>title : {{post.title}}</h1>
                 <a href="/user/{{post.writer}}"><h2>user : {{post.writer}}</h2></a>
-                <p>shortdesc : {{post.shortdesc}}</p>
-                <small>{{post.created_on}}</small>
-                <br>
-                {% if likes %}
-                <a href="/post_urls/post_liked_details/{{post.id}}">
-                    liked by <span style="border: solid blue;">{{likes.count}} </span>  user :
-                </a>
-                
-                    {% comment %} {% for like in likes %}
-                    {{like.writer}}-
-                    {% endfor %} {% endcomment %}
-                {% else %}
-                    No likes.
-                {% endif %}
-                {% comment %} {% for like in likes %}
-                    {{like.writer}}-
-                {% endfor %} {% endcomment %}
-                <br>
+                <p>
+                    shortdesc : {{post.shortdesc}}
+                </p>
+                <p>
+                    <small>{{post.created_on}}</small>
+                </p>
                 <h3> slug : {{post.slug}}</h3>
                 <div class="col-md-12" style="border-top: 6px solid green;">
                     <div class="row" style="height: 100%;">
@@ -77,7 +65,56 @@
     <hr>
     <h5>body : {{post.body}}</h5>
     <hr>
-    <div class="container">
+
+    <div class="col-md-12">
+        <div class="row" style="height: 100%;">
+            {% if user.is_authenticated %}
+                <div class="col-md-6">
+                    <form action="{% url 'class_detail' post_id=post.id %}" method="post" >
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <input type="submit" , value="bezan berim daa!" , name="form">
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    like :
+                    {% if check_like_post %}
+                        <form action="{% url 'class_detail' post_id=post.id %}" method="post" >
+                            {% csrf_token %}
+                            {{form2.as_p}}
+                            <input type="submit" , value="dislike" , name="form2">
+                        </form>
+                    {% else %}
+                        <form action="{% url 'class_detail' post_id=post.id %}" method="post" >
+                            {% csrf_token %}
+                            {{form2.as_p}}
+                            <input type="submit" , value="like" , name="form2">
+                        </form>
+                    {% endif %}
+                    <hr>
+                    <div>
+                        {% if likes %}
+                        <a href="/post_urls/post_liked_details/{{post.id}}">
+                            liked by <span style="border: solid blue;">{{likes.count}} </span>  user :
+                        </a>
+                        
+                            {% comment %} {% for like in likes %}
+                            {{like.writer}}-
+                            {% endfor %} {% endcomment %}
+                        {% else %}
+                            No likes.
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <h1> comments : count = {{comments.count}} </h1>
+                </div>
+            {% else %}
+                <h3 style="color: red;">login and then you can like or submit your coomment !</h3>
+            {% endif %}
+        </div>
+    </div>
+
+    {% comment %} <div class="container">
         <div class="col-md-12 my-3">
             {% if user.is_authenticated %}
                 like :
@@ -105,11 +142,7 @@
                 <h3 style="color: red;">login and then you can like or submit your coomment !</h3>
             {% endif %}
         </div>
-    </div>
-    <hr>
-    <hr>
-
-    <h1> comments : count = {{comments.count}} </h1>
+    </div> {% endcomment %}
     <hr>
     {% for comment in comments %}
         <div class="row">
