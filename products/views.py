@@ -228,15 +228,18 @@ class EditShop(UpdateView):
     template_name = 'set_shop/edit_shop.html'
     context_object_name = 'specified_post'
     #success_url = redirect(f'/onlineshop/view_shop/{get_object().id}')
-    def update(self, request, *args, **kwargs):
+
+    def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.user == self.object.owner :    
             self.object.status = 'load'
+            print('jjjjjjjjjjjjjjj' , self.object.status )
             self.object.save()
             messages.add_message(request, messages.SUCCESS, 'shop was edited !')
-            return redirect(f'/onlineshop/view_shop/{self.get_object().id }')
+            #return redirect(f'/onlineshop/view_shop/{self.get_object().id }')
         else :
             return HttpResponse('you dont have permission to do this !')
+        return super().post(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('Shop_Page', kwargs={'pk': self.get_object().id})

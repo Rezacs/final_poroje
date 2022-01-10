@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+    'rest_framework_swagger',
     'widget_tweaks',
 
     'basket',
@@ -160,10 +161,12 @@ LOCALE_PATHS = [
      str(BASE_DIR /'locale')
 ]
 
+# REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ) ,
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' ,
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

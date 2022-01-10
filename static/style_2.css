@@ -22,11 +22,9 @@
   background-color: #d37777;
   border-radius: 8px;
   color: #333;
-  display: block;
-  flex: 1;
   flex-direction: column;
   font-family: CerebriSans-Regular,-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
-  padding: 40px 28px;
+  padding: 2px 2px;
   text-align: center;
 }
 
