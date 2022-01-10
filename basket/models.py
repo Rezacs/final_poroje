@@ -106,6 +106,8 @@ class BasketItem ( models.Model ) :
         if self.quantity > self.product.quantity :
             #messages.add_message(None, messages.SUCCESS, 'product was edited !')
             self.quantity = self.product.quantity
+        if self.quantity == 0 :
+            self.quantity = 1 
         super(BasketItem,self).save(*args , **kwargs)
 
 class Order ( models.Model ) :

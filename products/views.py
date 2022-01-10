@@ -890,15 +890,15 @@ class ProductList_API(mixins.ListModelMixin, generics.GenericAPIView):
         }
 
 class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = BasketItem.objects.all()
+    # queryset = BasketItem.objects.filter(basket__status = 'live' , basket__owner = )
     # (basket__status = 'live')
     #filterset_class = PostListFilterss
     serializer_class = BasketItemSerializer
 
-    # def get_queryset(self):
-    #     if not Basket.objects.filter(owner = self.request.user).filter(status = 'live') :
-    #         return None
-    #     return BasketItem.objects.filter(basket__status = 'live').filter(basket__owner = self.request.user)
+    def get_queryset(self):
+        # if not Basket.objects.filter(owner = self.request.user).filter(status = 'live') :
+        #     return None
+        return BasketItem.objects.filter(basket__status = 'live').filter(basket__owner = self.request.user)
 
 
     def get(self, request, *args, **kwargs): 
@@ -927,13 +927,15 @@ class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.G
         if not basket :
             Basket.objects.create(owner = self.request.user , status = 'live')
             basket = Basket.objects.filter(owner = self.request.user).filter(status = 'live')
-        item = BasketItem.objects.filter(basket = basket)
-        #print('ittttttt' , item)
-        #item = get_object_or_404(BasketItem , basket = basket)
-        if not item :
-            return serializer.save(basket = basket[0] )
-        else :
-            pass
+        #return serializer.save(basket = basket[0] )
+        items = BasketItem.objects.filter(basket__in = basket)
+        #print('jjjjjjjjj' , serializer.data['product'])
+        if items :
+            for item in items :
+                # serializer.validated_data['product']
+                if item.product == serializer.validated_data['product'] :
+                    return Response(status=status.HTTP_403_FORBIDDEN) 
+        return serializer.save(basket = basket[0] )
 
 class BasketDetailUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
@@ -948,6 +950,17 @@ class BasketDetailUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
             return BasketSerializer
         else:
             return BasketEditSerializer
+
+    def delete(self, request, *args, **kwargs):
+        if self.get_object().status == 'live' :
+            return self.destroy(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        if self.get_object().status == 'live' :
+            return self.update(request, *args, **kwargs)
+        else :
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
 
 class ShopList_API(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Shop.accepted.all()
@@ -1002,7 +1015,7 @@ class CustomerProfile_API(mixins.ListModelMixin, mixins.UpdateModelMixin , gener
         if self.get_object().mobile == self.request.user.mobile :
             serializer.save()
         else :
-            pass
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
     # def partial_update(self, request, *args, **kwargs):
     #     kwargs['partial'] = True

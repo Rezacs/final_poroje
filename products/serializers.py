@@ -39,7 +39,7 @@ class ProductsListSerializer(serializers.ModelSerializer):
 class BasketSerializer (serializers.ModelSerializer) :
     class Meta :
         model = Basket
-        exclude = ['owner']
+        fields = '__all__'
 
 class BasketEditSerializer (serializers.ModelSerializer) :
     class Meta :
@@ -66,7 +66,7 @@ class CustomerSerializer (serializers.ModelSerializer) :
 class CustomerEditSerializer (serializers.ModelSerializer) :
     class Meta :
         model = Customer
-        exclude = [ 'mobile' , 'date_joined']
+        exclude = [ 'mobile' , 'date_joined' , 'username']
 
 
 
