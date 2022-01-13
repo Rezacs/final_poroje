@@ -19,7 +19,8 @@ class MyUser ( AbstractUser ) :
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return str(self.username)
+        #return str(self.mobile , self.username)
+        return f'{self.mobile} - {self.username}'
 
     backend = 'custom_login.mybackend.ModelBackend'
 

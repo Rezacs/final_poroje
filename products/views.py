@@ -19,6 +19,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics, mixins
 from rest_framework import status
+from rest_framework_simplejwt.views import TokenViewBase
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -871,23 +872,23 @@ from products.filter import *
 from products.serializers import *
 
 class ProductList_API(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Products.objects.filter(shop__status = 'chek')
+    queryset = Products.objects.filter(shop__status = 'chek').filter(quantity__gt = 0)
     filterset_class = ProductFilters
     serializer_class = ProductsListSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    def get_serializer_context(self):
-        """
-        Extra context provided to the serializer class.
-        """
-        return {
-            'request': self.request,
-            'format': self.format_kwarg,
-            'view': self,
-            'user': self.request.user,
-        }
+    # def get_serializer_context(self):
+    #     """
+    #     Extra context provided to the serializer class.
+    #     """
+    #     return {
+    #         'request': self.request,
+    #         'format': self.format_kwarg,
+    #         'view': self,
+    #         'user': self.request.user,
+    #     }
 
 class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     # queryset = BasketItem.objects.filter(basket__status = 'live' , basket__owner = )
@@ -927,15 +928,19 @@ class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.G
         if not basket :
             Basket.objects.create(owner = self.request.user , status = 'live')
             basket = Basket.objects.filter(owner = self.request.user).filter(status = 'live')
-        #return serializer.save(basket = basket[0] )
-        items = BasketItem.objects.filter(basket__in = basket)
-        #print('jjjjjjjjj' , serializer.data['product'])
-        if items :
-            for item in items :
-                # serializer.validated_data['product']
-                if item.product == serializer.validated_data['product'] :
-                    return Response(status=status.HTTP_403_FORBIDDEN) 
+
+        # try :
+        #     return serializer.save(basket = basket[0] )
+        # except :
+        #     return Response(status=status.HTTP_403_FORBIDDEN)
         return serializer.save(basket = basket[0] )
+
+        # items = BasketItem.objects.filter(basket__in = basket)
+        # if items :
+        #     for item in items :
+        #         if item.product == serializer.validated_data['product'] :
+        #             return Response(status=status.HTTP_403_FORBIDDEN) 
+        # return serializer.save(basket = basket[0] )
 
 class BasketDetailUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
@@ -960,6 +965,17 @@ class BasketDetailUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
             return self.update(request, *args, **kwargs)
         else :
             return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+class Baskets_API(mixins.ListModelMixin, generics.GenericAPIView):
+    filterset_class = ShopFilters
+    serializer_class = ShopListSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Basket.objects.filter(owner = self.request.user)
 
 
 class ShopList_API(mixins.ListModelMixin, generics.GenericAPIView):
@@ -1020,5 +1036,20 @@ class CustomerProfile_API(mixins.ListModelMixin, mixins.UpdateModelMixin , gener
     # def partial_update(self, request, *args, **kwargs):
     #     kwargs['partial'] = True
     #     return self.update(request, *args, **kwargs)
+
+
+class RegisterUser_API(mixins.CreateModelMixin , generics.GenericAPIView):
+    serializer_class = RegisterUserSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        Customer.objects.create(mobile = serializer.data['mobile'] )
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 

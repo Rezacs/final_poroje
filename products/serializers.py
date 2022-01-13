@@ -10,6 +10,9 @@ from post.models import Post
 from customer.models import *
 from products.models import *
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 # class ProductsDetailListSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Products
@@ -66,7 +69,12 @@ class CustomerSerializer (serializers.ModelSerializer) :
 class CustomerEditSerializer (serializers.ModelSerializer) :
     class Meta :
         model = Customer
-        exclude = [ 'mobile' , 'date_joined' , 'username']
+        exclude = [ 'mobile' , 'date_joined']
+
+class RegisterUserSerializer (serializers.ModelSerializer) :
+    class Meta :
+        model = User
+        fields = [ 'mobile' , 'password']
 
 
 

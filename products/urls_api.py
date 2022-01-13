@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path , include
 from django.conf import Settings, settings
 from django.conf.urls.static import static
+from django.urls.conf import re_path
 from django.views.generic import TemplateView
 from products.views import *
 from rest_framework_simplejwt.views import (
@@ -10,9 +11,23 @@ from rest_framework_simplejwt.views import (
 )
 
 from django.conf.urls import url
-from rest_framework_swagger.views import get_swagger_view
-schema_view = get_swagger_view(title='Pastebin API')
 
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
 
 # app_name = 'post' 
 # login_required(ProductListFilter.as_view() , login_url='login-mk')
@@ -22,9 +37,13 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('products', ProductList_API.as_view()  , name='Products'),
     path('add_product_to_basket', AddtoBasket_API.as_view()  , name='Add-Product-To-Basket'),
-    path('basket/<int:id>/', BasketDetailUpdateDeleteView_API.as_view(), name='Basket-Detail'),
+    path('basket', Baskets_API.as_view()  , name='Basket'),
+    path('basket/<int:id>/', BasketDetailUpdateDeleteView_API.as_view(), name='Basket-update'),
     path('shops', ShopList_API.as_view(), name='Shops'),
     path('profile/<int:id>', CustomerProfile_API.as_view(), name='Profile'),
-    url('map', schema_view),
-    path('map2', schema_view),
+    path('register', RegisterUser_API.as_view() , name='ssssssssss'),
+    
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)

@@ -52,6 +52,7 @@ from django.contrib.auth import get_user_model
 class Basket ( models.Model ) :
     # customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     owner = models.ForeignKey(get_user_model() , on_delete=models.PROTECT , blank=True , null=True)
+    items = models.ManyToManyField('products.Products' , through='BasketItem')
     created_date = models.DateTimeField(auto_now_add=True)
     order_date = models.DateTimeField(auto_now_add=True)
     STATUS_CHOICES = [ 
@@ -109,6 +110,9 @@ class BasketItem ( models.Model ) :
         if self.quantity == 0 :
             self.quantity = 1 
         super(BasketItem,self).save(*args , **kwargs)
+
+    class Meta :
+        unique_together = [['basket' , 'product']]
 
 class Order ( models.Model ) :
     basket = models.ForeignKey(Basket, on_delete=models.CASCADE , default=None)

@@ -19,7 +19,7 @@ class PostListSerializer(serializers.ModelSerializer):
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['first_name' , 'last_name' , 'user_name'] 
+        fields = ['first_name' , 'last_name'] 
 
 class PostSerializer(serializers.ModelSerializer):
     customer = AccountSerializer(read_only=True)
