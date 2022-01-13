@@ -32,16 +32,21 @@ schema_view = get_schema_view(
 # app_name = 'post' 
 # login_required(ProductListFilter.as_view() , login_url='login-mk')
 
+# login_required(ShopDashboard.as_view() , login_url='login-mk')
+# 
+
 urlpatterns = [
+    path('register', RegisterUser_API.as_view() , name='ssssssssss'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # path('profile/<int:id>', login_required(CustomerProfile_API.as_view() , login_url='login-mk'), name='Profile'),
+    path('profile/<int:id>', CustomerProfile_API.as_view() , name='Profile'),
+    path('shops', ShopList_API.as_view(), name='Shops'),
     path('products', ProductList_API.as_view()  , name='Products'),
-    path('add_product_to_basket', AddtoBasket_API.as_view()  , name='Add-Product-To-Basket'),
+    path('basket_item', AddtoBasket_API.as_view()  , name='Add-Product-To-Basket'),
+    path('basket_item/<int:id>', BasketItemUpdateDeleteView_API.as_view() , name='ssssssssss'),
     path('basket', Baskets_API.as_view()  , name='Basket'),
     path('basket/<int:id>/', BasketDetailUpdateDeleteView_API.as_view(), name='Basket-update'),
-    path('shops', ShopList_API.as_view(), name='Shops'),
-    path('profile/<int:id>', CustomerProfile_API.as_view(), name='Profile'),
-    path('register', RegisterUser_API.as_view() , name='ssssssssss'),
     
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

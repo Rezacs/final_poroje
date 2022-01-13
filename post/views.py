@@ -120,7 +120,7 @@ def class_post_detail ( request , post_id ) :
         check_like_post = Post_Likes.objects.filter(post = post).filter(writer = user)
         check_like_comment = Post_Comment_likes.objects.filter(comments__post = post).filter(writer = user)
     else :
-        customer = Customer.objects.get(user_name ='Anonymous')
+        #customer = Customer.objects.get(user_name ='Anonymous')
         check_like_post = False
         check_like_comment = False
     form = CommentModelForm()

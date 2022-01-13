@@ -962,19 +962,53 @@ class BasketDetailUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
 
     def put(self, request, *args, **kwargs):
         if self.get_object().status == 'live' :
+            # if serializer.validated_data['status']
             return self.update(request, *args, **kwargs)
         else :
             return Response(status=status.HTTP_403_FORBIDDEN)
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        if serializer.data['status'] != 'live' :
+            basket = self.get_object()
+            items = BasketItem.objects.filter(basket = basket )
+            basket.Chekedout_date = datetime.datetime.now()
+            basket.save()
+            for item in items :
+                item.status = 'load'
+                item.product.quantity -= item.quantity
+                item.product.save()
+                item.save()
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
 
 class Baskets_API(mixins.ListModelMixin, generics.GenericAPIView):
-    filterset_class = ShopFilters
-    serializer_class = ShopListSerializer
+    #filterset_class = ShopFilters
+    serializer_class = BasketSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
+        baskets = Basket.objects.filter(owner = self.request.user)
+        items = BasketItem.objects.filter(basket__in=baskets)
+        for basket in baskets :
+            if basket.status == 'live' :
+                basket.price = 0
+                for item in items :
+                    if item.basket == basket :
+                        basket.price += ( item.product.price * item.quantity )
+                basket.save()
         return Basket.objects.filter(owner = self.request.user)
 
 
@@ -1051,5 +1085,36 @@ class RegisterUser_API(mixins.CreateModelMixin , generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class BasketItemUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
+    lookup_field = 'id'
+    lookup_url_kwarg = 'id'
+    #queryset = Basket.objects.all()
+
+    # def get(self, request, *args, **kwargs): 
+    #     return BasketItem.objects.filter(basket__owner = self.request.user).filter(basket__status = 'live')
+
+    def get_queryset(self):
+        return BasketItem.objects.filter(basket__owner = self.request.user).filter(basket__status = 'live')
+        return Basket.objects.filter(owner = self.request.user).filter(status = 'live')
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return BasketItemSerializer
+        else:
+            return BasketItemSerializer
+
+    def delete(self, request, *args, **kwargs):
+        if self.get_object().basket.status == 'live' :
+            return self.destroy(request, *args, **kwargs)
+        else :
+            return Response(status=status.HTTP_403_FORBIDDEN)
+            
+    def put(self, request, *args, **kwargs):
+        if self.get_object().basket.status == 'live' :
+            return self.update(request, *args, **kwargs)
+        else :
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
 

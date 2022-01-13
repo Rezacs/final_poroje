@@ -48,6 +48,10 @@ class BasketEditSerializer (serializers.ModelSerializer) :
     class Meta :
         model = Basket
         exclude = ['owner' , 'Chekedout_date' , 'total_products_count' , 'created_date' , 'order_date' , 'price']
+    def __init__(self , *args, **kwargs):
+        super(BasketEditSerializer, self).__init__(*args, **kwargs)
+        if self.instance:
+            self.fields['address'].queryset = Address.objects.filter(owner=self.instance.owner)
 
 class BasketItemSerializer(serializers.ModelSerializer):
     basket = BasketSerializer(read_only=True)

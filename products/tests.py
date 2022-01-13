@@ -20,8 +20,29 @@ class Faze3TestCase (APITestCase) :
     profile_list_url = reverse('Profile')
     def setUp(self):
         self.user = mommy.make(User)
-        posts = mommy.make(Post,  writer=self.user, _quantity=10)
-        comments = mommy.make(Post_Comments,  writer=self.user, _quantity=10)
+        response = self.client.post(
+            'onlineshop_api/api/token/',
+            data = {
+                'mobile' : self.user.mobile,
+                'password' : self.user.password
+            }
+        )
+        self.token = response.data['access']
+        self.api_authentication()
+    
+    def api_authentication(self) :
+        self.client.credentials(HTTP_AUTHORIZATION = self.token )
+
+
+
+
+
+
+
+
+
+
+
 
 class TestPost (APITestCase):
 

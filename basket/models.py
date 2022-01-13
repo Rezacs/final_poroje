@@ -101,9 +101,11 @@ class BasketItem ( models.Model ) :
     added_date = models.DateTimeField(auto_now_add=True)
     desc = models.TextField(blank=True , null=True)
     def __str__(self) -> str:
-        return f"{self.product} factor {self.added_date}"
+        return f"{self.basket.owner}-{self.product} :  {self.basket.pk}  -{self.added_date} : {self.pk}"
 
     def save(self , *args , **kwargs) :
+        if self.product.quantity < 1 :
+            return None
         if self.quantity > self.product.quantity :
             #messages.add_message(None, messages.SUCCESS, 'product was edited !')
             self.quantity = self.product.quantity

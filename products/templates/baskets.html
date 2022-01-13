@@ -10,7 +10,7 @@
         {% for basket in baskets %}
             <div class="row">
                 {% if basket.status == 'live' %}
-                    <span style="color: red;">your live basket :</span>
+                    <span style="color: red;">your live basket : id = {{ basket.id }}</span>
                     <div class="col-md-6 text-left ">
                         <br>
                             {% for item in items %}
@@ -63,7 +63,7 @@
     {% for basket in baskets %}
         <div class="row">
             {% if basket.status != 'live' %}
-                
+            <span style="color: red;">id = {{ basket.id }}</span>
                 <div class="col-md-6">
                     <br>
                     {% for item in items %}
