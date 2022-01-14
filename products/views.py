@@ -1021,6 +1021,15 @@ class ShopList_API(mixins.ListModelMixin, generics.GenericAPIView):
         return self.list(request, *args, **kwargs)
 
 
+class CustomerProfileList_API(mixins.ListModelMixin, generics.GenericAPIView):
+    queryset = Customer.objects.all()
+    #filterset_class = ProductFilters
+    serializer_class = CustomerSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
 class CustomerProfile_API(mixins.ListModelMixin, mixins.UpdateModelMixin , generics.GenericAPIView):
     """
     Takes a id of user and returns the informations of it
@@ -1040,6 +1049,8 @@ class CustomerProfile_API(mixins.ListModelMixin, mixins.UpdateModelMixin , gener
     def post(self, request, *args, **kwargs):
         if self.request.user.mobile == Customer.objects.get(pk = self.kwargs['id']).mobile :
             return self.update(request, *args, **kwargs)
+        else :
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':

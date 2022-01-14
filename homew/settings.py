@@ -121,6 +121,12 @@ SWAGGER_SETTINGS = {
         'patch'
     ],
 }
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#     'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ] ,
+#     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+# } 
 
 
 
@@ -190,12 +196,6 @@ LOCALE_PATHS = [
 #     'rest_framework_simplejwt.authentication.JWTAuthentication',
 # ) ,
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-    'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ] ,
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
-}
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

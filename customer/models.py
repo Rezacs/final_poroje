@@ -18,7 +18,7 @@ class Customer ( models.Model ) :
     ]
     first_name = models.CharField(max_length=300 ,blank=True , null=True)
     last_name = models.CharField(max_length=300,blank=True , null=True)
-    #user_name = models.CharField(max_length=100 , unique=True ,blank=True , null=True )
+    user_name = models.CharField(max_length=100 , unique=True ,blank=True , null=True )
     desc = models.TextField(blank=True , null=True)
     # country = models.CharField(max_length=300)
     # city = models.CharField(max_length=300)
