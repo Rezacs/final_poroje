@@ -1089,15 +1089,34 @@ class CustomerProfile_API(mixins.ListModelMixin, mixins.UpdateModelMixin , gener
     #     kwargs['partial'] = True
     #     return self.update(request, *args, **kwargs)
 
-
+from django.contrib.auth import authenticate , login , logout
+from rest_framework.test import force_authenticate
 class RegisterUser_API(mixins.CreateModelMixin , generics.GenericAPIView):
     serializer_class = RegisterUserSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        Customer.objects.create(mobile = serializer.data['mobile'] )
+        #self.perform_create(serializer)
+        #Customer.objects.create(mobile = serializer.data['mobile'] )
+        user = User.objects.create_user(
+            mobile=serializer.data['mobile'],
+            password=serializer.data['password'],
+        )
+        #check = Customer.objects.filter(email = form.cleaned_data['email'] )
+        # if check :
+        #     messages.add_message(request, messages.INFO , 'this email have an account !')
+        #     return render (request , 'forms/register.html' , {'form' : form })
+        #user_name=form.cleaned_data.get('username') ,
+        # customer = Customer.objects.create(
+            
+        #     email=form.cleaned_data.get('email') ,
+        #     mobile=form.cleaned_data['mobile']
+        # )
+        #user = authenticate(mobile=serializer.data['mobile'],password=serializer.data('password'))
+        # if user is not None :
+        #     login(request,user)
+        # force_authenticate(request , user=User.objects.get(mobile = serializer.data['mobile']) )
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

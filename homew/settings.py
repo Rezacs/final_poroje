@@ -111,7 +111,7 @@ SWAGGER_SETTINGS = {
             'in': 'header'
         }
     },
-    'USE_SESSION_AUTH': False,
+    'USE_SESSION_AUTH': True,
     'JSON_EDITOR': True,
     'SUPPORTED_SUBMIT_METHODS': [
         'get',
@@ -127,6 +127,10 @@ SWAGGER_SETTINGS = {
 #     ] ,
 #     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 # } 
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+} 
 
 
 
