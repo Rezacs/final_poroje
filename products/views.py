@@ -883,9 +883,6 @@ class ProductList_API(mixins.ListModelMixin, generics.GenericAPIView):
     filterset_class = ProductFilters
     serializer_class = ProductsListSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
     # def get_serializer_context(self):
     #     """
     #     Extra context provided to the serializer class.
@@ -896,6 +893,11 @@ class ProductList_API(mixins.ListModelMixin, generics.GenericAPIView):
     #         'view': self,
     #         'user': self.request.user,
     #     }
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
 
 class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     # queryset = BasketItem.objects.filter(basket__status = 'live' , basket__owner = )

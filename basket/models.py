@@ -111,9 +111,9 @@ class BasketItem ( models.Model ) :
             self.quantity = self.product.quantity
         if self.quantity == 0 :
             self.quantity = 1 
-        check = BasketItem.objects.filter(basket = self.basket).filter(product = self.product)
-        if check :
-            return None
+        # check = BasketItem.objects.filter(basket = self.basket).filter(product = self.product)
+        # if check :
+        #     return None
         super(BasketItem,self).save(*args , **kwargs)
 
     class Meta :
