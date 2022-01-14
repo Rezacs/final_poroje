@@ -197,6 +197,29 @@
     </div>
     <hr> {% endcomment %}
 
+    <hr>
+    <table style="width:100%">
+        <tr>
+          <td>User mobile</td>
+          <td>Number of buy</td>
+          <td>last date</td>
+        </tr>
+        {% for sell in sells %}
+            <tr>
+                <td>{{sell.basket.owner.mobile}} - {{sell.basket.owner.username}}</td>
+                <td>{{sell.quantity}}</td>
+                <td>{{sell.basket.Chekedout_date}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <style>
+        table, th, td {
+          border:1px solid black;
+        }
+    </style>
+    <hr>
+
     Products :
     <div class="col-md-12 " style="margin-bottom: 50px;">
         <div class="row mt-1 g-3 btn-light " style="height: 100%;">

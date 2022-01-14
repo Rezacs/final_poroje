@@ -654,6 +654,13 @@ class ShopStatistics (DetailView):
         return obj
 
     def get_context_data(self, **kwargs):
+        # 13 :
+        # total_sell = BasketItem.objects.filter(
+        #     Q(status = 'done') |
+        #     Q(status = 'load')
+        # ).annotate(
+        #     date = F()
+        # )
         context = super(ShopStatistics, self).get_context_data(**kwargs)
         user = self.request.user
         sells = BasketItem.objects.filter(product__shop = self.get_object()).filter(
