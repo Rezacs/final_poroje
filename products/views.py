@@ -281,6 +281,11 @@ class AddProduct(View):
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
         form = AddProductForm(None , None or self.request.POST , self.request.FILES)
         bad_product = form.save(commit=False)
+        name = bad_product.cleaned_data.get("name")
+        check = Products.objects.filter(shop__id = self.kwargs['ids'] ).filter(name = name)
+        if check :
+            messages.add_message(request, messages.INFO , 'you have the same product !')
+            return redirect(f'/onlineshop/view_shop/{shop[0].id }')
         bad_product.shop = shop[0]  #request.user
         bad_product.save()
         messages.add_message(request, messages.INFO , 'new product was saved !')
@@ -313,7 +318,7 @@ def class_product_detail ( request , id ) :
         check_like_product = Products_Likes.objects.filter(products = product).filter(writer = user)
         check_like_comment = Products_Comment_likes.objects.filter(comments__products = product).filter(writer = user)
     else :
-        customer = Customer.objects.get(user_name ='Anonymous')
+        customer = None
         check_like_product = False
         check_like_comment = False
     form = ProductCommentModelForm()
@@ -476,10 +481,11 @@ class UserShopsView (ListView):
     def get_context_data(self, **kwargs):
         context = super(UserShopsView, self).get_context_data(**kwargs)
         user = self.request.user
+        pointed_user = User.objects.get(username = self.kwargs['username'])
         #shops = Shop.not_deleted.filter(owner = user)
-        customer = Customer.objects.get(mobile=user.mobile)
-        followers = UserConnections.objects.filter(follower=user)
-        followings = UserConnections.objects.filter(following=user)
+        customer = Customer.objects.get(mobile=pointed_user.mobile)
+        followers = UserConnections.objects.filter(follower=pointed_user)
+        followings = UserConnections.objects.filter(following=pointed_user)
         context.update({
             'user' : user,
             'customer':customer,

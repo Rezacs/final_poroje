@@ -9,12 +9,14 @@
 </a> {% endcomment %}
 
     {% for user in users %}
-    <div class="container mt-3" style="text-align: center;">
-        <h1><a href="user/{{user.username}}">{{user.username}}</a></h1>
-        <small>{{user.name}}</small>
-        <small>posts : {{user.post_set.all}}</small>
-        <hr>
-    </div>
+        {% if user.username %}
+            <div class="container mt-3" style="text-align: center;">
+                <h1><a href="user/{{user.username}}">{{user.username}}</a></h1>
+                <small>{{user.name}}</small>
+                <small>posts : {{user.post_set.all}}</small>
+                <hr>
+            </div>
+        {% endif %}
     {% endfor %}
     
 

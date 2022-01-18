@@ -68,15 +68,12 @@
                                 </form>
                             {% endif %}
                             <br>
-                            
-                            <a class="btn btn-sm btn-warning" href="/onlineshop/Shop/{{pointed_user.username}}">
-                                <small>View Shop</small>
-                            </a>
-
-
                         </p>
                     {% endif %}
                 {% endif %}
+                <a class="btn btn-sm btn-warning" href="/onlineshop/Shop/{{pointed_user.username}}">
+                    <small>View Shop</small>
+                </a>
             </div>
         </div>
     </div>
@@ -118,18 +115,6 @@
                                     <a href="/class_post_detail/{{post.id}}">show detail</a>
                                     <br>
                                     <a href="/class_category_posts/gslug/{{post.slug}}">show detail via SLUG </a>
-                                </p>
-                        
-                                
-                                <p>
-                                    <a class="btn btn-sm btn-primary" href="post_urls/edit_post/{{post.id}}">
-                                        <small>edit Post</small>
-                                    </a>
-                                </p>
-                                <p>
-                                    <a class="btn btn-sm btn-danger" href="post_urls/delete_post/{{post.id}}">
-                                        <small>Delete Post</small>
-                                    </a>
                                 </p>
                             </div>
                         </div>

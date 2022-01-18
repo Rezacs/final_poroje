@@ -48,17 +48,19 @@
                             Cart1
                             <span class="badge bg-dark text-white ms-1 rounded-pill">{{user.basket_set.all.count}}</span>
                         </button> {% endcomment %}
-                        <a class="btn btn-outline-dark" style="margin-right: 5px;" href="/onlineshop/basket">
-                            <i class="bi-cart-fill me-1"></i>
-                            Cart
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">{{live_basket_items_xx.all.count}}</span>
-                        </a>
                         {% if user.is_authenticated %}
-                        <button class="btn btn-outline-dark" type="submit">
-                            <i class="bi-badge-cc-fill me-1"></i>
-                            Welcom : {{user.username}}
-                            <span class="badge bg-dark text-white ms-1 rounded-pill" id="cartval">{{user.post_set.all.count}}</span>
-                        </button>
+                            <a class="btn btn-outline-dark" style="margin-right: 5px;" href="/onlineshop/basket">
+                                <i class="bi-cart-fill me-1"></i>
+                                Cart
+                                <span class="badge bg-dark text-white ms-1 rounded-pill">{{live_basket_items_xx.all.count}}</span>
+                            </a>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-outline-dark" type="submit">
+                                <i class="bi-badge-cc-fill me-1"></i>
+                                Welcom : {{user.username}}
+                                <span class="badge bg-dark text-white ms-1 rounded-pill" id="cartval">{{user.post_set.all.count}}</span>
+                            </button>
                         {% endif %}
                     </form>
                 </div>

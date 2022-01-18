@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 from django.shortcuts import render
 from django.contrib.auth import login
 from django.http import HttpResponseRedirect
@@ -11,13 +12,16 @@ def mobile_login ( request ) :
     if request.method == "POST" :
         if "mobile" in request.POST :
             mobile = request.POST.get('mobile')
-            user = MyUser.objects.get(mobile=mobile)
-            login(request , user)
+            try :
+                user = MyUser.objects.get(mobile=mobile)
+                login(request , user)
+            except :
+                raiseExceptions
             return HttpResponseRedirect(reverse('mobile-dashboard'))
     return render ( request , 'mobile_login.html')
 
 def dashboard ( request ) :
-    return render ( request , 'mobile-dashboard.html')
+    return render ( request , 'dashboard.html')
 
 def register ( request ) :
     form = RegisterForm
@@ -45,7 +49,7 @@ def register ( request ) :
                 user.save()
                 return HttpResponseRedirect(reverse('verify'))
                 
-    return render ( request , 'register.html' , {'form' : form })
+    return render ( request , 'verify.html' , {'form' : form })
 
 def verify ( request ) :
     return render (request , 'verify.html' )

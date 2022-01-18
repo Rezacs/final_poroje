@@ -64,7 +64,8 @@ def class_post_slug_view ( request , given_slug ) :
         check = Post_Likes.objects.filter(post = post).filter(writer = user)
 
     else :
-        customer = Customer.objects.get(user_name ='Anonymous')
+        customer = None
+        check = None
     form = CommentModelForm()
     form2 = LikePostForm()
     form3 = LikeCommentForm()
