@@ -873,7 +873,6 @@ def base_template ( request ) :
             live_basket_items_xx = None
     else :
         live_basket_items_xx = None
-    print('jjjjjjjjjjjjjjjjj' , live_basket_items_xx)
     return { 'live_basket_items_xx' : live_basket_items_xx}
 
 
