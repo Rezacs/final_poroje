@@ -234,7 +234,6 @@ class EditShop(UpdateView):
         self.object = self.get_object()
         if request.user == self.object.owner :    
             self.object.status = 'load'
-            print('jjjjjjjjjjjjjjj' , self.object.status )
             self.object.save()
             messages.add_message(request, messages.SUCCESS, 'shop was edited !')
             #return redirect(f'/onlineshop/view_shop/{self.get_object().id }')

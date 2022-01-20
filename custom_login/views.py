@@ -64,16 +64,12 @@ def verify ( request ) :
         mobile = request.session.get('user_mobile')
         user = MyUser.objects.get(mobile = mobile)
         if request.method == 'POST' :
-            print('sssssssss0')
             # check otp expiration 
             if not check_otp_expiration(user.mobile) :
-                print('ssssssssssssssss')
                 return HttpResponseRedirect(reverse('register'))
             if user.otp != int(request.POST.get('otp')) :
-                print('sssssssssss1')
                 return HttpResponseRedirect(reverse('register'))
             
-            print('sssssssssss2')
             user.is_active = True
             user.save()
             login(request , user)
