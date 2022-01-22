@@ -209,9 +209,14 @@ def add_comment ( request , comment_id ) :
 
     return render ( request , 'forms/add_comment.html' , {'form' : form , 'post' : post} )
 
+from django.core.paginator import Paginator
 def class_post_list ( request ) :
+    #
     posts = Post.published.all()
-    return render ( request , 'class_post_list.html' , {'posts' :posts })
+    paginator = Paginator(posts, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render ( request , 'class_post_list.html' , {'posts' :posts , 'page_obj' : page_obj})
 
 def class_category_detail ( request , category_id ) :
     category = Category.objects.get(id = category_id)
@@ -585,6 +590,7 @@ class TagListView ( ListView ) :
     model = Tag
     paginate_by = 5
     #context_object_name = 'publisher'
+    #
     #queryset = Tag.objects.all()
     template_name = "tag_list.html"
 
