@@ -97,6 +97,8 @@ class UserEditFormModel (forms.ModelForm ) :
     class Meta :
         model = User
         fields = ['username' , 'email' , 'mobile' ]
+        # if User.objects.filter(username = super.fields['username'] ):
+        #     raise ValidationError("password e reapet ba asli yeki nis ")
         
 class SetNewPasswordForm (forms.Form ):
     password = forms.CharField(widget=forms.PasswordInput , label='old password')

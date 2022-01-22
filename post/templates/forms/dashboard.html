@@ -21,38 +21,32 @@
             </div>
             <div class="col-md-6">
                 <div class="row">
-                    <div class="col-md-3" style="border: solid orange; margin: 15px; height: 90px; background-color: cornflowerblue;">
+                    <div class="col-md-3" style="border: solid orange; margin: 15px; height: 90px; background-color: rgba(100, 148, 237, 0.466);">
                         <a href="/followersandfollowings/{{user.username}}">Followers :</a>
                         <small>{{followers.count}}</small>
                     </div>
-                    <div class="col-md-3" style="border: solid orange; margin: 15px; background-color: cornflowerblue;">
+                    <div class="col-md-3" style="border: solid orange; margin: 15px; background-color: rgba(100, 148, 237, 0.466);">
                         Followings :
                         <small>{{followings.count}}</small>
                     </div>
-                    <div class="col-md-3" style="border: solid orange; margin: 15px; background-color: cornflowerblue;">
+                    <div class="col-md-3" style="border: solid orange; margin: 15px; background-color: rgba(100, 148, 237, 0.466);">
                         Posts :
                         <small>{{posts.count}}</small>
                     </div>
                 </div>
-                <h1>dashboard</h1>
                 <h2>username : {{user.username}}</h2>
-                <p>
-                    <h2 style="color: red;">user id : {{user.pk}}</h2>
-                </p>
-                <p>
-                    <h2 style="color: rgb(59, 138, 95);">customer id : {{customer.pk}}</h2>
-                </p>
-                <h5>
-                    <p>
-                        <small>
-                        discription about this user :
-                        </small>
-                    </p>
-                    <p>
-                        {{customer.desc}}
-                    </p>
-                </h5>
-                <hr>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>
+                            <h2 style="color: red;">user id : {{user.pk}}</h2>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            <h2 style="color: rgb(59, 138, 95);">customer id : {{customer.pk}}</h2>
+                        </p>
+                    </div>
+                </div>
 
                 <button onclick="myFunction2()" id="buttonss" >Click to show options</button>
                 <div id="myDIV2" style="display: none; margin-top: 30px;">
@@ -100,6 +94,19 @@
                 </div>
             </div>
         </div>
+        {% if customer.desc %}
+            <hr>
+            <h5>
+                <p>
+                    <small>
+                    discription about yourself :
+                    </small>
+                </p>
+                <p>
+                    {{customer.desc}}
+                </p>
+            </h5>
+        {% endif %}
     </div>
 
     <hr>

@@ -692,6 +692,7 @@ def set_new_password ( request ) :
             print(user.check_password(form.cleaned_data.get('password')))
             if user.check_password(form.cleaned_data.get('password')) :
                 user.set_password(form.cleaned_data.get('password1'))
+                #
                 user.save()
                 messages.add_message(request, messages.INFO , 'new password was set !')
             print(request.user)
@@ -1093,14 +1094,23 @@ def edit_personal_info_user ( request ) :
     if request.method == "POST" :
         form = UserEditFormModel(request.POST , instance=specified_user)
         if form.is_valid() :
-            form.save()
-            specified_customer.user_name = form.cleaned_data.get('username')
-            specified_customer.mobile = form.cleaned_data.get('mobile')
-            specified_customer.email = form.cleaned_data.get('email')
-            specified_customer.save()
-            print('ussssssss*******' , specified_customer)
-            messages.add_message(request, messages.SUCCESS , 'profile was edited !')
-            return redirect(reverse('dashboard'))
+            if form.cleaned_data.get('username') != None :
+                if form.cleaned_data.get('email') != None :
+                    if User.objects.exclude(mobile = specified_user.mobile).filter(username = form.cleaned_data.get('username') ):
+                        messages.add_message(request, messages.WARNING , 'username with this name already exists !')
+                        return redirect(reverse('dashboard'))
+                    if User.objects.exclude(mobile = specified_user.mobile).filter(email = form.cleaned_data.get('email') ):
+                        messages.add_message(request, messages.WARNING , 'email with this address already exists !')
+                        return redirect(reverse('dashboard'))
+            else :
+                form.save()
+                specified_customer.user_name = form.cleaned_data.get('username')
+                specified_customer.mobile = form.cleaned_data.get('mobile')
+                specified_customer.email = form.cleaned_data.get('email')
+                specified_customer.save()
+                print('ussssssss*******' , specified_customer)
+                messages.add_message(request, messages.SUCCESS , 'profile was edited !')
+                return redirect(reverse('dashboard'))
     return render ( request , 'poroje/edit_personal_info_user.html',{'form' : form , 'user':specified_user })
 
 #Email forgotten password

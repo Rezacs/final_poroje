@@ -45,6 +45,8 @@ def register ( request ) :
             form = RegisterForm(request.POST)
             if form.is_valid () :
                 user = form.save(commit=False)
+                customer = Customer.objects.create(mobile = form.cleaned_data.get('mobile'))
+                customer.save()
                 # send OTP
                 otp = get_random_otp()
                 send_otp(mobile , otp)

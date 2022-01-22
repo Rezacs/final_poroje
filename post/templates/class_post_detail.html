@@ -14,7 +14,7 @@
                     <img class="responsive" src="{% static 'download.jpeg' %}" alt="image_of_post" style="width: 380px; height: 380px; border: solid red;">
                 {% endif %}
             </div>
-            <div class="col-md-6" style="border-left: 6px solid green;">
+            <div class="col-md-6" style="border: 1px solid green;">
                 <h1>title : {{post.title}}</h1>
                 <a href="/user/{{post.writer.username}}"><h2>user : {{post.writer.username}}</h2></a>
                 <p>
@@ -24,7 +24,7 @@
                     <small>{{post.created_on}}</small>
                 </p>
                 <h3> slug : {{post.slug}}</h3>
-                <div class="col-md-12" style="border-top: 6px solid green;">
+                <div class="col-md-12" style="border: 2px solid green;">
                     <div class="row" style="height: 100%;">
                         <div class="col-md-6">
                             <small>tags :</small>
