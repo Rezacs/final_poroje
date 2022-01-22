@@ -83,6 +83,7 @@ urlpatterns = [
     #following and follower
     path('follow/<str:username>',follow,name="follow"),
     path('followersandfollowings/<str:username>',followersandfollowings , name="followers-and-followings"),
+    path('myfollowersandfollowings', myfollowersandfollowings , name="my-followers-and-followings"),
     path('unfollow/<str:username>',unfollow,name="unfollow"),
     path('removefollower/<str:username>',removefollower,name="removefollower"),
     #faze 3

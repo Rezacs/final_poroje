@@ -42,6 +42,7 @@ urlpatterns = [
     path('liked_posts' , Liked_Posts ,name='liked-posts' ),
     path('unlike/<int:post_id>' , unlike ,name='unlike' ),
     path('inbox' , inbox ,name='inbox' ),
+    path('sent' , sent_messages ,name='sent_messages' ),
     path('post_liked_details/<int:post_id>' , liked_details ,name='post_liked_details' ),
     #CW20
     path('HW20' , CW_ajax ,name='HW20' ),

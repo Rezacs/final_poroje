@@ -18,7 +18,7 @@ class DraftPosts(models.Manager):
 
 
 class CommonInfo(models.Model):
-    tag = models.ManyToManyField(Tag)
+    tag = models.ManyToManyField(Tag , blank=True)
     title = models.CharField(max_length=100)
     body = models.TextField(blank=True, null=True)
     shortdesc = models.CharField( 'short description',max_length=255,null=True,blank=True)

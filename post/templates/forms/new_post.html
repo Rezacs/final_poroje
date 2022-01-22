@@ -1,12 +1,14 @@
 {% extends "class_base.html" %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
     <div class="container">
         safhe ye sabt e poste jadid 
         <div class="col-md-12 my-3">
             <form action="{% url 'new-post' %}" method="post" enctype='multipart/form-data'>
                 {% csrf_token %}
-                {{form.as_p}}
+                {{form|crispy}}
                 <input type="submit" , value="register">
             </form>
         </div>

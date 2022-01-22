@@ -1176,10 +1176,18 @@ class MyFormView(View):
 @login_required(login_url='login-mk')
 def inbox (request ) :
 
-        user = User.objects.get(username=request.user.username)
+        user = User.objects.get(mobile=request.user.mobile)
         messages = SendMessage.objects.filter(reciever = user)
 
         return render ( request , 'poroje/inbox.html' , {'pointed_user' : user , 'posts' : messages })
+
+@login_required(login_url='login-mk')
+def sent_messages (request ) :
+
+        user = User.objects.get(mobile=request.user.mobile)
+        messages = SendMessage.objects.filter(writer = user)
+
+        return render ( request , 'poroje/sent_messages.html' , {'pointed_user' : user , 'posts' : messages })
 
 @login_required(login_url='login-mk')
 def delete_message(request,message_id):
@@ -1224,6 +1232,27 @@ def removefollower(request,username):
 def followersandfollowings (request , username) :
 
     pointed_user = User.objects.get(username=username)
+    followers = UserConnections.objects.filter(following=pointed_user)
+    followings = UserConnections.objects.filter(follower=pointed_user)
+
+    if request.method == "POST" :
+        next = request.GET.get('next')
+        #if next :
+            # return redirect (request.GET.get('next'))
+        if 'follow' in request.POST :
+            check = UserConnections.objects.filter(following=request.user,follower=next)
+            check.delete()
+            messages.add_message(request, messages.INFO , 'user Unfollowed !')
+
+    return render ( request , 'poroje/relations.html' , {
+        'followers':followers,
+        'followings':followings,
+        'pointed_user' : pointed_user
+    })
+
+def myfollowersandfollowings (request ) :
+
+    pointed_user = User.objects.get(mobile=request.user.mobile)
     followers = UserConnections.objects.filter(following=pointed_user)
     followings = UserConnections.objects.filter(follower=pointed_user)
 
