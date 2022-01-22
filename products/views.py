@@ -6,7 +6,6 @@ from commentandlike.models import *
 from customer.models import *
 from products.models import *
 from products.serializers import *
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from post.serializers import *
@@ -14,7 +13,6 @@ from products.forms import *
 from django.contrib import messages
 from django.http.response import Http404, HttpResponse, HttpResponseNotFound
 from basket.models import *
-
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics, mixins
@@ -25,6 +23,19 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 from products.serializers import *
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import TemplateView,ListView,DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q , F
+from django.contrib.auth import authenticate , login , logout
+from rest_framework.test import force_authenticate
+from products.filter import *
+from products.serializers import *
+import datetime
+from django.views.generic.edit import FormView
+from .forms import FileFieldForm
 
 @api_view(['GET'])
 def products_list_2(request):
@@ -70,18 +81,11 @@ def post_comments_detail_2(request , comment_id):
 
 #FINAL_PROJECT
 
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import TemplateView,ListView,DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
-
-
-
 #@permission_classes([IsAuthenticated])
 #from django.utils.decorators import method_decorator
 #@method_decorator(login_required, name='dispatch')
+#mixin_dispatch
+# force_authenticate(self.user)
 
 class CheckOwner () :
     def __init__(self , request , owner) -> None:
@@ -222,7 +226,7 @@ def delete_shop(request,id):
     else :
         return HttpResponse('you dont have permission to do this !')
 
-#mixin_dispatch
+
 class EditShop(UpdateView):
     model = Shop
     form_class = AddShopForm
@@ -612,7 +616,7 @@ def edit_basket ( request , pk ) :
                 return redirect('/onlineshop/basket')
         else :
             return HttpResponse('you dont have permission to do this !')
-    return render ( request , 'set_shop/edit_comment.html',{'form' : form  , 'basket' : basket})
+    return render ( request , 'set_shop/edit_basket.html',{'form' : form  , 'basket' : basket})
 
 
 @login_required(login_url='login-mk')
@@ -625,7 +629,6 @@ def delete_product_from_basket(request,pk):
     messages.add_message(request, messages.SUCCESS, 'product was removed from basket !')
     return redirect('/onlineshop/basket')
 
-import datetime
 
 @login_required(login_url='login-mk')
 def checkout_basket ( request , pk ) :
@@ -672,6 +675,7 @@ class ShopStatistics (DetailView):
             Q(status = 'done') |
             Q(status = 'load') |
             Q(status = 'canc') ).order_by('-added_date')
+        sums = sells.aggregate(sum)
         products = Products.objects.filter(shop = self.get_object())
         #form = SelledItemsForm(self.request.POST, prefix="sells")
         form = FilterBaskets()
@@ -773,8 +777,6 @@ def restore_shop(request,pk):
     else :
         return HttpResponse('you dont have permission to do this !')
 
-from django.views.generic.edit import FormView
-from .forms import FileFieldForm
 
 class FileFieldFormView(FormView):
     form_class = FileFieldForm
@@ -875,12 +877,8 @@ def base_template ( request ) :
     return { 'live_basket_items_xx' : live_basket_items_xx}
 
 
-# force_authenticate(self.user)
-
 # faze 3 :
 
-from products.filter import *
-from products.serializers import *
 
 class ProductList_API(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Products.objects.filter(shop__status = 'chek').filter(quantity__gt = 0)
@@ -900,7 +898,6 @@ class ProductList_API(mixins.ListModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-
 
 
 class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
@@ -937,6 +934,13 @@ class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.G
         #serializer.writer = self.request.user
         #serializer.customer = Customer.objects.get(user_name=self.request.user.username)
         #items = BasketItem.objects.filter(basket = basket).filter(product = self.get_serializer(data=request.data))
+
+        # items = BasketItem.objects.filter(basket__in = basket)
+        # if items :
+        #     for item in items :
+        #         if item.product == serializer.validated_data['product'] :
+        #             return Response(status=status.HTTP_403_FORBIDDEN) 
+        # return serializer.save(basket = basket[0] )
         basket = Basket.objects.filter(owner = self.request.user).filter(status = 'live')
         if not basket :
             Basket.objects.create(owner = self.request.user , status = 'live')
@@ -948,12 +952,6 @@ class AddtoBasket_API(mixins.ListModelMixin, mixins.CreateModelMixin, generics.G
         #     return Response(status=status.HTTP_403_FORBIDDEN)
         return serializer.save(basket = basket[0] )
 
-        # items = BasketItem.objects.filter(basket__in = basket)
-        # if items :
-        #     for item in items :
-        #         if item.product == serializer.validated_data['product'] :
-        #             return Response(status=status.HTTP_403_FORBIDDEN) 
-        # return serializer.save(basket = basket[0] )
 
 class BasketDetailUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
@@ -1085,18 +1083,17 @@ class CustomerProfile_API(mixins.ListModelMixin, mixins.UpdateModelMixin , gener
 
         return Response(serializer.data)
 
+    # def partial_update(self, request, *args, **kwargs):
+    #     kwargs['partial'] = True
+    #     return self.update(request, *args, **kwargs)
+
     def perform_update(self, serializer):
         if self.get_object().mobile == self.request.user.mobile :
             serializer.save()
         else :
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-    # def partial_update(self, request, *args, **kwargs):
-    #     kwargs['partial'] = True
-    #     return self.update(request, *args, **kwargs)
 
-from django.contrib.auth import authenticate , login , logout
-from rest_framework.test import force_authenticate
 class RegisterUser_API(mixins.CreateModelMixin , generics.GenericAPIView):
     serializer_class = RegisterUserSerializer
 

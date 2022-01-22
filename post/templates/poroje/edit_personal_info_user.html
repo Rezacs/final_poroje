@@ -18,27 +18,50 @@
 
 {% block content %}
     <div class="container">
-        <div class="col-md-12 my-3">
+        <div class="row mt-1 g-3 btn-light " style="height: 100%;">
             <form action="{% url 'edit-personal-info-user'  %}" method="post">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
-                <div class='fieldWrapper'>
-                    {{ form.username.errors }}
-                    <label for="{{form.username.id_for_label}}"> enter username : </label>
-                    {{ form.username }}
-                </div>
-                <div class='fieldWrapper'>
-                    {{ form.email.errors }}
-                    <label for="{{form.email.id_for_label}}"> enter email : </label>
-                    {{ form.email }}
-                </div>
-                <div class='fieldWrapper'>
-                    {{ form.mobile.errors }}
-                    <label for="{{form.mobile.id_for_label}}"> enter mobile : </label>
-                    {{ form.mobile }}
-                </div>
+                <p>
+                    <div class='fieldWrapper'>
+                        {{ form.username.errors }}
+                        <label for="{{form.username.id_for_label}}"> enter username : </label>
+                        <br>
+                        {{ form.username }}
+                    </div>
+                </p>
+                <p>
+                    <div class='fieldWrapper'>
+                        {{ form.email.errors }}
+                        <label for="{{form.email.id_for_label}}"> enter email : </label>
+                        <br>
+                        {{ form.email }}
+                    </div>
+                </p>
+                <p>
+                    <div class='fieldWrapper'>
+                        {{ form.mobile.errors }}
+                        <label for="{{form.mobile.id_for_label}}"> enter mobile : </label>
+                        <br>
+                        {{ form.mobile }}
+                    </div>
+                </p>
                 <input type="submit" , value="bezan berim daa!">
             </form>
         </div>
+    </div>
+
+    <div class="row">
+        <form action="{% url 'edit-personal-info-user'  %}" method="post">
+            <div class="col-md-4">
+                salam
+            </div>
+            <div class="col-md-4">
+                vaght be kheir
+            </div>
+            <div class="col-md-4">
+                salam
+            </div>
+        </form>
     </div>
 {% endblock content %}

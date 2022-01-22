@@ -118,6 +118,16 @@ class SetNewPasswordForm (forms.Form ):
         if password1 != password2 :
             raise ValidationError("password e reapet ba asli yeki nis ")
 
+class SetNewPassword_Without_Old_OneForm (forms.Form ):
+    password1 = forms.CharField(widget=forms.PasswordInput , label='new password')
+    password2 = forms.CharField(widget=forms.PasswordInput , label='new password repeat')
+    def clean(self) :
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+
+        if password1 != password2 :
+            raise ValidationError("password e reapet ba asli yeki nis ")
 
 class SetNewUsernameForm (forms.Form ):
     new_username = forms.CharField()

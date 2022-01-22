@@ -1,35 +1,32 @@
 # from custom_login.models import *
 # User = MyUser
-from django.http import HttpResponseRedirect
-
-
-from django.http import response 
-from django.http.response import HttpResponse, HttpResponseNotFound
 # from django.contrib.auth.models import User
 
+
+from django.http import HttpResponseRedirect
+from django.http import response 
+from django.http.response import HttpResponse, HttpResponseNotFound
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
-
 from datetime import datetime
 from post.models import *
 from commentandlike.models import *
 from grups.models import *
 from django.views.generic import TemplateView,ListView,DetailView
 from django.views import View
-
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
 from post.forms import *
 from django.urls import reverse
 from django.contrib.auth import authenticate , login , logout
-
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 from post.serializers import *
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
+
+
 
 def class_today_time (request) :
     return HttpResponse(f'today is : {datetime.today()}')
@@ -109,7 +106,6 @@ def class_post_slug_view ( request , given_slug ) :
         'form3' : form3
     })
 
-    
 def class_post_detail ( request , post_id ) :
     post = Post.objects.get(id = post_id)
     if post.writer != request.user and post.status == 'DRF' :
@@ -173,8 +169,6 @@ def class_post_detail ( request , post_id ) :
         'form3' : form3
     })
 
-#
-
 @login_required(login_url='login-mk')
 def comment_like ( request , comment_id ) :
     comment = get_object_or_404(Post_Comments , id =comment_id )
@@ -194,7 +188,7 @@ def comment_like ( request , comment_id ) :
                 
     return redirect(f'/class_post_detail/{post.id}')
 
-
+@login_required(login_url='login-mk')
 def add_comment ( request , comment_id ) :
     comment = get_object_or_404(Post_Comments , id =comment_id )
     post = comment.post
@@ -215,8 +209,6 @@ def add_comment ( request , comment_id ) :
 
     return render ( request , 'forms/add_comment.html' , {'form' : form , 'post' : post} )
 
-#
-
 def class_post_list ( request ) :
     posts = Post.published.all()
     return render ( request , 'class_post_list.html' , {'posts' :posts })
@@ -235,18 +227,9 @@ def class_category_posts ( request , category_name ) :
 
 class PostDetailView(DetailView):
     model = Post
-    # This file should exist somewhere to render your page
     template_name = 'gslug.html'
-    # Should match the value after ':' from url <slug:the_slug>
-    # slug_url_kwarg = 'the_slug'
-    # Should match the name of the slug field on the model 
-    # slug_field = 'slug' # DetailView's default value: optional
     context_object_name = 'post'
 
-
-class ModelListView(ListView):
-    model = Post
-    template_name = ".html"
 
 # class PostDetailView(DetailView):
 #     #more  https://docs.djangoproject.com/en/3.2/ref/class-based-views/generic-display/  
@@ -261,8 +244,6 @@ def post_list_2(request):
     serializer = PostListSerializer(posts , many = True)
 
     return Response(data = serializer.data , status=200)
-
-# PostSerializer
 
 @api_view(['GET'])
 def post_detail_2(request , input_id):
@@ -693,8 +674,18 @@ def register_maktab(request) :
 
 @login_required(login_url='login-mk')
 def set_new_password ( request ) :
-    form = SetNewPasswordForm()
     user = request.user
+    if user.password :
+        form = SetNewPasswordForm()
+    else :
+        form = SetNewPassword_Without_Old_OneForm()
+        if request.method == "POST" :
+            form = SetNewPassword_Without_Old_OneForm(request.POST)
+            if form.is_valid() :
+                user.set_password(form.cleaned_data.get('password1'))
+                user.save()
+                messages.add_message(request, messages.INFO , 'new password was set !')
+                return redirect(reverse('dashboard'))
     if request.method == "POST" :
         form = SetNewPasswordForm(request.POST)
         if form.is_valid() :
@@ -1098,9 +1089,7 @@ def login_email (request) :
 def edit_personal_info_user ( request ) :
     specified_user = get_object_or_404(User , mobile =request.user.mobile )
     specified_customer = Customer.objects.get(mobile=request.user.mobile)
-    print('injjjjjja' , specified_customer)
     form = UserEditFormModel(instance=specified_user)
-    print('username' , request.user.username)
     if request.method == "POST" :
         form = UserEditFormModel(request.POST , instance=specified_user)
         if form.is_valid() :

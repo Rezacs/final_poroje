@@ -4,8 +4,6 @@
 
 {% block content %}
     <div class="col-md-12">
-        <p>
-            <h1 style="color: rgb(207, 37, 207);">Shop page </h1>
         <div class="row" style="height: 100%;">
             <div class="col-md-6">
                 {% if post.image %}
@@ -15,8 +13,7 @@
                 {% endif %}
             </div>
             <div class="col-md-6">
-                <h1>title : {{post.name}}</h1>
-                <a href="/user/{{post.owner}}"><h2>user : {{post.owner}}</h2></a>
+                <h1>shop name : {{post.name}}</h1>
             </div>
         </div>
     </div>

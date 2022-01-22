@@ -97,7 +97,7 @@ class Products ( models.Model ) :
     weight = models.TextField()
     # secondary_group = models.ForeignKey(Secondary_group, on_delete=models.CASCADE)
     # category = models.ForeignKey(Category, on_delete=models.CASCADE , blank=True, null=True)
-    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE , null = True)
     image = models.ImageField(upload_to='uploads',null=True,blank=True)
     tag = models.ManyToManyField(Tag )
     category = models.ManyToManyField(Category ,blank=True )

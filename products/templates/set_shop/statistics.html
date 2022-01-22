@@ -5,7 +5,8 @@
 {% block content %}
     <div class="col-md-12">
         <p>
-            <h1 style="color: rgb(207, 37, 207);">Shop page </h1>
+            <h1 style="color: rgb(207, 37, 207);">Shop Statistics page </h1>
+        </p>
         <div class="row" style="height: 100%;">
             <div class="col-md-6">
                 {% if post.image %}
@@ -90,7 +91,7 @@
                             
                             {% if basket.owner.username %}
                                 <a class="btn btn-sm btn-primary" href="/user/{{basket.owner.username}}">
-                                    bought by : {{basket.owner.username}}
+                                    bought by : {{basket.owner.username}} - {{basket.owner.mobile}}
                                 </a> 
                             {% else %}
                                 <a class="btn btn-sm btn-primary" href="/user/{{basket.owner.username}}">
@@ -100,6 +101,9 @@
                             <a class="btn btn-sm btn-warning" href="/onlineshop/view_basket/{{post.id}}/{{basket.id}}" style="margin-top: 30px;">
                                 <small>See items</small>
                             </a>
+                            <p>
+                                Total cost : {{basket.price}}
+                            </p>
                         </div>
                     </div>
                 {% endfor %}

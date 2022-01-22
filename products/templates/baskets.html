@@ -39,8 +39,17 @@
                             </p>
                     </div>
                     <div class="col-md-6">
-                        total price : {{basket.price}}
-                        <br>
+                        <p>
+                            total price : <br>
+                            <b>
+                                {{basket.price}}  
+                            </b> 
+                        </p>
+                        <p>
+                            Selected addres : <br>
+                            {{basket.address.title}}-{{basket.address.country}}-{{basket.address.city}} ,
+                            {{basket.address.street}}-{{basket.address.alley}}-{{basket.address.number}}
+                        </p>
                         <a class="btn btn-sm btn-primary" href="{% url 'Edit-Basket' pk=basket.id %}">
                             <small>Edit Basket</small>
                         </a>
