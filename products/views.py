@@ -480,7 +480,7 @@ class UserShopsView (ListView):
     def get_queryset(self):
         pointed_user = User.objects.get(username = self.kwargs['username'])
         queryset = super().get_queryset()
-        return queryset.filter(owner = pointed_user)
+        return queryset.filter(owner = pointed_user , status = 'chek')
     def get_context_data(self, **kwargs):
         context = super(UserShopsView, self).get_context_data(**kwargs)
         user = self.request.user
@@ -494,6 +494,7 @@ class UserShopsView (ListView):
             'customer':customer,
             'followers':followers,
             'followings':followings,
+            'pointed_user' : pointed_user
         })
         return context
 
@@ -675,7 +676,6 @@ class ShopStatistics (DetailView):
             Q(status = 'done') |
             Q(status = 'load') |
             Q(status = 'canc') ).order_by('-added_date')
-        sums = sells.aggregate(sum)
         products = Products.objects.filter(shop = self.get_object())
         #form = SelledItemsForm(self.request.POST, prefix="sells")
         form = FilterBaskets()

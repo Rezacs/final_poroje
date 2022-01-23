@@ -714,7 +714,7 @@ def dashboard ( request ) :
     followers = UserConnections.objects.filter(follower=user)
     followings = UserConnections.objects.filter(following=user)
     if request.user.username == None :
-        messages.add_message(request, messages.WARNING , 'set your username so others can view your page')
+        messages.add_message(request, messages.WARNING , 'set your username so others can view your page and send you messages !')
     return render ( request , 'forms/dashboard.html' , {
         'posts' :posts,
         'user' : user,
