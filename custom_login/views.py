@@ -32,13 +32,18 @@ def register ( request ) :
             if 'mobile' in request.POST :
                 mobile = request.POST.get('mobile')
                 user = MyUser.objects.get(mobile=mobile)
-                otp = get_random_otp()
-                send_otp(mobile , otp)
-                # send_otp_soap(mobile , otp)
-                user.otp = otp
-                user.otp_created_time = datetime.datetime.now()
-                user.save()
+                if not check_otp_expiration(user.mobile) :
+                    messages.add_message(request, messages.INFO, 'New Otp created !')
+                    otp = get_random_otp()
+                    send_otp(mobile , otp)
+                    # send_otp_soap(mobile , otp)
+                    user.otp = otp
+                    user.otp_created_time = datetime.datetime.now()
+                    user.save()
+                else :
+                    messages.add_message(request, messages.INFO, 'Old Otp you have !')
                 request.session['user_mobile'] = user.mobile
+                messages.add_message(request, messages.INFO, 'you had account !')
                 return HttpResponseRedirect(reverse('verify'))
 
         except MyUser.DoesNotExist :
@@ -57,6 +62,7 @@ def register ( request ) :
                 user.is_active = False
                 user.save()
                 request.session['user_mobile'] = user.mobile
+                messages.add_message(request, messages.SUCCESS, 'New account for your mobile created !')
                 return HttpResponseRedirect(reverse('verify'))
                 
     return render ( request , 'register.html' , {'form' : form })

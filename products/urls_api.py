@@ -38,6 +38,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('register', RegisterUser_API.as_view() , name='API-Register'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/otp', OtpTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('profile', CustomerProfileList_API.as_view() , name='API-Profile'),
     path('profile/<int:id>', CustomerProfile_API.as_view() , name='API-Profile-Edit'),

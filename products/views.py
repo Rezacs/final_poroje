@@ -582,6 +582,8 @@ def basket ( request ) :
     live_items = items.filter(basket__status='live')
     if live :
         for p in live_items :
+            if p.quantity > p.product.quantity :
+                BasketItem.objects.delete(pk = p.pk)
             live_products_count += (p.quantity)
         #print('llllllllllllllllllll',live_products_count)
         #print('jjjjjjjjjjjjjjjjj',live)
@@ -1157,4 +1159,16 @@ class BasketItemUpdateDeleteView_API(generics.RetrieveUpdateDestroyAPIView):
         else :
             return Response(status=status.HTTP_403_FORBIDDEN)
 
+# faze 4 token :
 
+from custom_login.helper import *
+
+class OtpTokenObtainPairView(TokenViewBase):
+    """
+    Takes a set of user credentials and returns an access and refresh JSON web
+    token pair to prove the authentication of those credentials.
+    """
+    serializer_class = OtpLoginUserSerializer
+    def check (self) :
+        if not check_otp_expiration(self.serializer_class['mobile']) :
+            return Response(status=status.HTTP_403_FORBIDDEN)

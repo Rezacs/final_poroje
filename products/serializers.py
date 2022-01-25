@@ -80,6 +80,11 @@ class RegisterUserSerializer (serializers.ModelSerializer) :
         model = User
         fields = [ 'mobile' , 'password']
 
+class OtpLoginUserSerializer (serializers.ModelSerializer) :
+    class Meta :
+        model = User
+        fields = [ 'mobile' , 'otp']
+
 
 
 # class AccountSerializer(serializers.ModelSerializer):

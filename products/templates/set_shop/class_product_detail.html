@@ -115,8 +115,6 @@
                                 <input type="submit" , value="like" , name="form2">
                             </form>
                         {% endif %}
-                        <hr>
-                        <h1> comments : count = {{comments.count}} </h1>
                     </div>  
                 {% else %}
                     <h3 style="color: red;">login and then you can like or submit your coomment !</h3>
@@ -125,8 +123,8 @@
         </div>
     </div>
     <hr>
+    <h1> comments : count = {{comments.count}} </h1>
     <hr>
-
     {% for comment in comments %}
         <div class="row">
             <div class="col-md-12">
