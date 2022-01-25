@@ -46,22 +46,15 @@
                         {{ form.mobile }}
                     </div>
                 </p>
-                <input type="submit" , value="bezan berim daa!">
+                <p>
+                    <input type="submit" , value="bezan berim daa!">
+                </p>
+                {% if not user.mobile_checked %}
+                    <a class="btn btn-sm btn-primary" href="{% url 'otp-register' %}">
+                        <small>Verify your mobile</small>
+                    </a>                 
+                {% endif %}
             </form>
         </div>
-    </div>
-
-    <div class="row">
-        <form action="{% url 'edit-personal-info-user'  %}" method="post">
-            <div class="col-md-4">
-                salam
-            </div>
-            <div class="col-md-4">
-                vaght be kheir
-            </div>
-            <div class="col-md-4">
-                salam
-            </div>
-        </form>
     </div>
 {% endblock content %}

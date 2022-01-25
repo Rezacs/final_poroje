@@ -83,6 +83,8 @@ def verify ( request ) :
             user.save()
             login(request , user)
             messages.add_message(request, messages.SUCCESS, 'Logged In successfully')
+            user.mobile_checked = True
+            user.save()
             return redirect(reverse('dashboard'))
         return render (request , 'verify.html' , {'mobile' : mobile })
     except :

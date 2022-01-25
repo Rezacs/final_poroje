@@ -11,6 +11,7 @@ class MyUser ( AbstractUser ) :
     mobile = models.CharField(max_length=11 , unique=True)
     otp = models.PositiveIntegerField(blank=True , null=True)
     otp_created_time = models.DateTimeField(auto_now=True)
+    mobile_checked = models.BooleanField(null=True , blank=True)
 
     objects = MyUserManager()
 

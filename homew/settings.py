@@ -102,6 +102,17 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'myproject',
+#         'USER': 'myprojectuser',
+#         'PASSWORD': 'password',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
+
 LOGIN_URL = '/post_urls/login'
 SWAGGER_SETTINGS = {
     'SHOW_REQUEST_HEADERS': True,

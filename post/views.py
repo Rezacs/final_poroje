@@ -1097,6 +1097,10 @@ def edit_personal_info_user ( request ) :
     specified_user = get_object_or_404(User , mobile =request.user.mobile )
     specified_customer = Customer.objects.get(mobile=request.user.mobile)
     form = UserEditFormModel(instance=specified_user)
+    if specified_user.mobile_checked != True :
+        messages.add_message(request, messages.WARNING , 'your mobile is not verified !')
+    else :
+        messages.add_message(request, messages.SUCCESS , 'your mobile is verified !')
     if request.method == "POST" :
         form = UserEditFormModel(request.POST , instance=specified_user)
         if form.is_valid() :
