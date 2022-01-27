@@ -3,45 +3,48 @@
 {% load static %}
 
 {% block content %}
+    <p>
+        <a class="btn btn-sm btn-primary" href="post_urls/add_category">
+            add category
+        </a>
+    </p>
 
-
-    <a class="btn btn-sm btn-primary" href="post_urls/add_category">
-        add category
-    </a>
-
-    {% for category in categorys %}
-    <div class="container mt-3" style="text-align: center;">
-        <h1>{{category}}</h1>
-        <small>{{category.created_on | date}}</small>
-        <small>
-            {{catgory.paren}}
-        </small>
-        {% if category.parent %}
-            <p>
+    <div class="row"> 
+        {% for category in categorys %}
+        <div class="col-md-6" style="border: solid green;">
+            <div class="container mt-3" style="text-align: center;">
+                <h1>{{category}}</h1>
+                <small>{{category.created_on | date}}</small>
                 <small>
-                    Parent : <h5 style="color: seagreen;">{{category.parent}}</h5>
+                    {{catgory.paren}}
                 </small>
-            </p>
-        {% endif %}
-        <p>
-            <a href="class_category_detail/{{category.id}}">class_category_detail</a>
-            <br>
-            <a href="class_category_posts/{{category.name}}">class_category_posts</a>
-        </p>
-        <p>
-            <a class="btn btn-sm btn-primary" href="post_urls/edit_category_name/{{category.id}}">
-                <small>edit category name</small>
-            </a>
-        </p>
-        <p>
-            <a class="btn btn-sm btn-danger" href="post_urls/delete_category/{{category.id}}">
-                <small>Delete category</small>
-            </a>
-        </p>
-
-        <hr>
+                {% if category.parent %}
+                    <p>
+                        <small>
+                            Parent : <h5 style="color: seagreen;">{{category.parent}}</h5>
+                        </small>
+                    </p>
+                {% endif %}
+                <p>
+                    <a href="class_category_detail/{{category.id}}">class_category_detail</a>
+                    <br>
+                    <a href="class_category_posts/{{category.name}}">class_category_posts</a>
+                </p>
+                <p>
+                    <a class="btn btn-sm btn-primary" href="post_urls/edit_category_name/{{category.id}}">
+                        <small>edit category name</small>
+                    </a>
+                </p>
+                <p>
+                    <a class="btn btn-sm btn-danger" href="post_urls/delete_category/{{category.id}}">
+                        <small>Delete category</small>
+                    </a>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+
     
 
 {% endblock content %}
