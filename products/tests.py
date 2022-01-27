@@ -115,17 +115,24 @@ class Faze3TestCase (APITestCase) :
 
     def test_edit_basket_item(self) :
         id = Customer.objects.get(mobile = self.user.mobile)
-        basket = Basket.objects.get(owner = self.user)
-        item = BasketItem.objects.filter(basket = basket )
         #response = self.client.get(reverse('API-Profile-Edit') , kwargs = {'id' : id.pk })
-        response = self.client.post(
-            reverse('API-Basket-Item-Edit' , kwargs = {'id' : item[0].pk } ),
+        response1 = self.client.post(
+            reverse('API-Basket-Item'),
             data = {
-                'quantity' : '2',
+                'quantity' : '3',
                 'product' : '2'
             }
         )
-        self.assertEqual(response.status_code , status.HTTP_200_OK)
+        basket = Basket.objects.get(owner = self.user , status='live')
+        item = BasketItem.objects.filter(basket = basket )
+        response = self.client.post(
+            reverse('API-Basket-Item-Edit' , kwargs = {'id' : item[0].pk } ),
+            data = {
+                'quantity' : '1',
+                'product' : '2'
+            }
+        )
+        self.assertEqual(response.status_code , status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 

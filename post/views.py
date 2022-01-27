@@ -1105,13 +1105,13 @@ def edit_personal_info_user ( request ) :
         form = UserEditFormModel(request.POST , instance=specified_user)
         if form.is_valid() :
             if form.cleaned_data.get('username') != None :
-                if form.cleaned_data.get('email') != None :
-                    if User.objects.exclude(mobile = specified_user.mobile).filter(username = form.cleaned_data.get('username') ):
-                        messages.add_message(request, messages.WARNING , 'username with this name already exists !')
-                        return redirect(reverse('dashboard'))
-                    if User.objects.exclude(mobile = specified_user.mobile).filter(email = form.cleaned_data.get('email') ):
-                        messages.add_message(request, messages.WARNING , 'email with this address already exists !')
-                        return redirect(reverse('dashboard'))
+                if User.objects.exclude(mobile = specified_user.mobile).filter(username = form.cleaned_data.get('username') ):
+                    messages.add_message(request, messages.WARNING , 'username with this name already exists !')
+                    return redirect(reverse('dashboard'))
+            if form.cleaned_data.get('email') != None :
+                if User.objects.exclude(mobile = specified_user.mobile).filter(email = form.cleaned_data.get('email') ):
+                    messages.add_message(request, messages.WARNING , 'email with this address already exists !')
+                    return redirect(reverse('dashboard'))
             else :
                 form.save()
                 specified_customer.user_name = form.cleaned_data.get('username')

@@ -4,14 +4,25 @@
 
 {% block content %}
 
-<a class="btn btn-sm btn-primary" href="post_urls/add_category">
-    add category
-</a>
+
+    <a class="btn btn-sm btn-primary" href="post_urls/add_category">
+        add category
+    </a>
 
     {% for category in categorys %}
     <div class="container mt-3" style="text-align: center;">
         <h1>{{category}}</h1>
         <small>{{category.created_on | date}}</small>
+        <small>
+            {{catgory.paren}}
+        </small>
+        {% if category.parent %}
+            <p>
+                <small>
+                    Parent : <h5 style="color: seagreen;">{{category.parent}}</h5>
+                </small>
+            </p>
+        {% endif %}
         <p>
             <a href="class_category_detail/{{category.id}}">class_category_detail</a>
             <br>
