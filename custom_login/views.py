@@ -74,10 +74,10 @@ def verify ( request ) :
         if request.method == 'POST' :
             # check otp expiration 
             if not check_otp_expiration(user.mobile) :
-                return HttpResponseRedirect(reverse('register'))
+                return HttpResponseRedirect(reverse('otp-register'))
             if user.otp != int(request.POST.get('otp')) :
                 messages.add_message(request, messages.WARNING, 'Wrong Code')
-                return HttpResponseRedirect(reverse('register'))
+                return HttpResponseRedirect(reverse('otp-register'))
             
             user.is_active = True
             user.save()
@@ -89,4 +89,4 @@ def verify ( request ) :
         return render (request , 'verify.html' , {'mobile' : mobile })
     except :
         messages.add_message(request, messages.WARNING, 'Error !')
-        return HttpResponseRedirect(reverse('register'))
+        return HttpResponseRedirect(reverse('otp-register'))

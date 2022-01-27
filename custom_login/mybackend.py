@@ -1,5 +1,6 @@
 from django.contrib.auth.backends import ModelBackend
 from custom_login.models import *
+from custom_login.helper import *
 
 class MobileBackend (ModelBackend ) :
     def authenticate(self, request, username=None , password=None , **kwargs ):
@@ -10,12 +11,14 @@ class MobileBackend (ModelBackend ) :
             pass
 
 class OtpBackend(ModelBackend) :
-    def authenticate(self , request ,mobile,otp, email=None , password=None , **kwargs) :
+    def authenticate(self , request , email=None , password=None , **kwargs) :
         try :
-            user = MyUser.objects.get(mobile = mobile)
+            user = MyUser.objects.get(mobile = kwargs['mobile'] )
+            otp = user.otp
+            if str(otp) == str(password) :
+                if check_otp_expiration(user.mobile) :
+                    return user
+            else :
+                return None
         except Exception :
             return None
-        else :
-            otp = user.otp
-            if otp == otp :
-                return user

@@ -28,7 +28,7 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView,ListView,DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q , F
+from django.db.models import Q , F , Sum
 from django.contrib.auth import authenticate , login , logout
 from rest_framework.test import force_authenticate
 from products.filter import *
@@ -109,6 +109,13 @@ class ShopDashboard (ListView):
         customer = Customer.objects.get(mobile=user.mobile)
         followers = UserConnections.objects.filter(follower=user)
         followings = UserConnections.objects.filter(following=user)
+        #######
+        # labels = []
+        # data = []
+        # chart_queryset = Basket.objects.filter(status = 'past' , shop__in = shops , ).values('Chekedout_date').annotate(
+        #     sell = Sum('price')
+        # ).order_by('-Chekedout_date')
+        #######
         context.update({
             'user' : user,
             'customer':customer,
@@ -284,7 +291,7 @@ class AddProduct(View):
         shop = Shop.accepted.filter(id = self.kwargs['ids'] )
         form = AddProductForm(None , None or self.request.POST , self.request.FILES)
         bad_product = form.save(commit=False)
-        name = bad_product.cleaned_data.get("name")
+        name = bad_product.name
         check = Products.objects.filter(shop__id = self.kwargs['ids'] ).filter(name = name)
         if check :
             messages.add_message(request, messages.INFO , 'you have the same product !')

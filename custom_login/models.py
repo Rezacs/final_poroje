@@ -23,6 +23,6 @@ class MyUser ( AbstractUser ) :
         #return str(self.mobile , self.username)
         return f'{self.username}'
 
-    backend = 'custom_login.mybackend.ModelBackend'
+    # backend = 'custom_login.mybackend.ModelBackend'
 
     #objects = models.Manager()
