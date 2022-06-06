@@ -58,4 +58,7 @@ urlpatterns = [
     path('edit_address/<int:id>', edit_address , name='edit-address'),
     #faze 3 poroje 
     path('api_posts', PostListFilter.as_view() , name='edit-address'),
-]+ static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)
+]
+
+urlpatterns  +=  static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

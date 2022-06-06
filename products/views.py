@@ -399,7 +399,7 @@ def delete_product_comment(request,pk):
 class EditProduct(UpdateView):
     model = Products
     #fields = ['name']
-    form_class = AddProductForm
+    form_class = EditProductForm
     #exclude = ['shop']
     #form = AddProductForm()
     template_name = 'set_shop/edit_product.html'

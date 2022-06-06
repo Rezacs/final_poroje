@@ -142,19 +142,30 @@ class CategoryModelForm (forms.ModelForm ) :
 class AddShopForm (forms.ModelForm) :
     class Meta :
         model = Shop
-        exclude = ['status' , 'owner' , 'customer' , 'admin_description' , 'created_on']
+        exclude = ['status' , 'owner' , 'customer' , 'admin_description' , 'created_on' , 'slug']
 
 class AddProductForm (forms.ModelForm) :
     class Meta :
         model = Products
-        exclude = ['shop']
+        exclude = ['shop' , 'slug']
     def __init__(self , shop_id=None , *args, **kwargs):
         super(AddProductForm, self).__init__(*args, **kwargs)
         if self.instance:
             if shop_id : 
-                print( 'jjjjjjjjjjjjjjjjjjjjjjjj' , shop_id) #self.kwargs['ids']
+                # print( 'jjjjjjjjjjjjjjjjjjjjjjjj' , shop_id) #self.kwargs['ids']
                 mentioned_shop = Shop.objects.get(id = shop_id)
                 self.fields['category'].queryset = Category.objects.filter(parent__in=mentioned_shop.category.all())
+            # else :
+            #     product = Products.objects.get(pk = request.GET.get('pk'))
+            #     shop = product.shop
+            #     shop_id = shop.pk
+            #     mentioned_shop = Shop.objects.get(id = shop_id)
+            #     self.fields['category'].queryset = Category.objects.filter(parent__in=mentioned_shop.category.all())
+
+class EditProductForm (forms.ModelForm) :
+    class Meta :
+        model = Products
+        exclude = ['shop' , 'slug' , 'tag' , 'category']
 
 class ProductCommentModelForm ( forms.ModelForm ) :
     class Meta :
